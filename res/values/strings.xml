@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Waivelength</string>
+    <string name="email_hint">Email Address</string>
+    <string name="fullname_hint">Type Full Name</string>
+    <string name="username_hint">Type Username Here</string>
+    <string name="pw_hint">Password</string>
+    <string name="repw_hint">Re-Type Password</string>
+    <string name="notification_title">Notifications</string>
+    <string name="settings_title">Settings</string>
+    <string name="newsfeed_tab_title">Newsfeed</string>
+    <string name="notification_tab_title">Notification</string>
+    <string name="profile_tab_title">Profile</string>
+    <string name="settings_tab_title">Settings</string>
+    <string name="userinfo_title">User Information</string>
+    <string name="fullname_hint1">Name</string>
+    <string name="username_hint1">Username</string>
+    <string name="curpw_hint">Current Password</string>
+    <string name="newpw_hint">New Password</string>
+    <string name="confirmpw_hint">Confirm New Password</string>
+
+</resources>
