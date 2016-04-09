@@ -3,15 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-
         <RelativeLayout
+            android:id="@+id/navbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
+            android:layout_height="@dimen/navbar_height">
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -27,19 +22,17 @@
                 android:layout_centerVertical="true"
                 android:text="@string/notification_title"
                 android:textColor="@color/title_text_color"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textSize="@dimen/navbar_title_text_size" />
             
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
-            android:layout_weight="1" >
+            android:layout_below="@+id/navbarLayout"
+            android:background="#ffffff">
             
 
         </RelativeLayout>
-        
-    </LinearLayout>
     
 </RelativeLayout>

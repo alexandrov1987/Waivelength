@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@color/newsfeed_row_bg_color" >
+    
+	<com.waivelength.ui.view.CircularImageView
+         android:id="@+id/profileImageView"
+         android:layout_width="50dp"
+         android:layout_height="50dp"
+         android:layout_centerVertical="true"
+         android:layout_marginStart="10dp"
+     />
+
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginStart="5dp"
+	    android:layout_toEndOf="@+id/profileImageView"
+	    android:layout_centerVertical="true">
+	    
+	    <LinearLayout
+	        android:id="@+id/top_layout"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal"
+	        android:weightSum="7"
+	        >
+	        
+	        <TextView
+	            android:id="@+id/comment_fullnameTextview"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="6"
+	            android:lines="1"
+	            android:text="Stephen Holdsworth"
+	            android:textColor="@color/newsfeed_row_fullname_text_color"
+	            android:textSize="20sp" />
+	        
+			<RelativeLayout
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_gravity="center_vertical"
+			    android:layout_weight="1" >
+
+				<ImageView
+				    android:id="@+id/imageView1"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_centerVertical="true"
+				    android:background="@drawable/clock" />
+
+				<TextView
+				    android:id="@+id/timeTextView"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_marginStart="5dp"
+				    android:layout_centerVertical="true"
+				    android:layout_toEndOf="@+id/imageView1"
+				    android:text="1h" />
+			    
+			</RelativeLayout>	        
+	    </LinearLayout>
+
+	    <TextView
+		    android:id="@+id/comment_commentTextview"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/top_layout"
+		    android:layout_marginTop="20dp"
+		    android:text="ok"
+		    android:textColor="@color/newsfeed_row_caption_text_color"
+		    android:textSize="16sp" />
+	    	    
+	</RelativeLayout>
+		
+</RelativeLayout>

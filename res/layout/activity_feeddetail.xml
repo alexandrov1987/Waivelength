@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/nav_bg3" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/wave" />
+            
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/lft_arrow" />
+            
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#ffffff"
+            android:layout_weight="9"
+            android:orientation="vertical"
+            android:weightSum="11" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2" >
+                <com.waivelength.ui.view.CircularImageView
+		            android:id="@+id/profileImageView"
+		            android:layout_width="50dp"
+		            android:layout_height="50dp"
+		            android:layout_centerVertical="true"
+		            android:layout_marginStart="10dp"
+		        />
+
+                <LinearLayout
+			        android:id="@+id/top_layout"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:orientation="horizontal"
+			        android:weightSum="7"
+			        android:layout_toEndOf="@+id/profileImageView"
+			        android:layout_marginStart="5dp"
+			        android:layout_centerVertical="true"
+			        >
+			        
+			        <TextView
+			            android:id="@+id/detailfullnameTextview"
+			            android:layout_width="0dp"
+			            android:layout_height="wrap_content"
+			            android:layout_weight="6"
+			            android:lines="1"
+			            android:text="Stephen Holdsworth"
+			            android:textColor="@color/newsfeed_row_fullname_text_color"
+			            android:textSize="20sp" />
+			        
+					<RelativeLayout
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_gravity="center_vertical"
+					    android:layout_weight="1" >
+		
+						<ImageView
+						    android:id="@+id/imageView3"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_centerVertical="true"
+						    android:background="@drawable/clock" />
+		
+						<TextView
+						    android:id="@+id/timeTextView"
+						    android:layout_width="wrap_content"
+						    android:layout_height="wrap_content"
+						    android:layout_marginStart="5dp"
+						    android:layout_centerVertical="true"
+						    android:layout_toEndOf="@+id/imageView3"
+						    android:text="1h" />
+					    
+					</RelativeLayout>	        
+			    </LinearLayout>
+                
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5" >
+
+                <ImageView
+                    android:id="@+id/thumbnailImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" >
+
+                    <TextView
+                        android:id="@+id/viewsCntTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/newsfeed_row_fullname_text_color"
+                        android:text="0 views" />
+
+                    <ImageView
+                        android:id="@+id/imageView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/viewsCntTextView"
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/flag" />
+                    
+                </RelativeLayout>
+
+            </RelativeLayout>
+            
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3" >
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" >
+                    
+                    <RelativeLayout
+	                    android:id="@+id/commentLayout"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content">
+	                    <ImageButton
+		                    android:id="@+id/commentButton"
+		                    android:layout_width="wrap_content"
+		                    android:layout_height="wrap_content"
+		                    android:background="@drawable/message_btn" />
+	
+	                    <TextView
+	                        android:id="@+id/commentCntTextView"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:layout_centerHorizontal="true"
+	                        android:textColor="@color/newsfeed_row_fullname_text_color"
+	                        android:layout_below="@+id/commentButton"
+	                        android:text="3" />
+	                </RelativeLayout>	                
+                    
+                    <RelativeLayout
+	                    android:id="@+id/likeLayout"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginStart="50dp"
+	                    android:layout_toEndOf="@+id/commentLayout">
+	                    <ImageButton
+		                    android:id="@+id/likeButton"
+		                    android:layout_width="wrap_content"
+		                    android:layout_height="wrap_content"
+		                    android:background="@drawable/like_btn" />
+	
+	                    <TextView
+	                        android:id="@+id/likeCntTextView"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:layout_centerHorizontal="true"
+	                        android:textColor="@color/newsfeed_row_fullname_text_color"
+	                        android:layout_below="@+id/likeButton"
+	                        android:text="3" />
+	                </RelativeLayout>	
+                    
+                </RelativeLayout>
+
+            </RelativeLayout>
+            
+        </LinearLayout>
+        
+    </LinearLayout>
+
+</RelativeLayout>

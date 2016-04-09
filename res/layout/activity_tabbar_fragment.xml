@@ -4,15 +4,15 @@
 
     <RelativeLayout
         android:id="@+id/layout_fragment_content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@+id/tab_bar"
         />
 
     <LinearLayout
         android:id="@+id/tab_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="false"
         android:layout_alignParentEnd="false"
@@ -23,7 +23,8 @@
         <RelativeLayout
 	        android:id="@+id/tab_newsfeed_content"
 	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
+	        android:layout_height="46dp"
+	        android:layout_gravity="bottom"
 	        android:layout_weight="1">
 	        <RelativeLayout
 		        android:id="@+id/tab_newsfeed_content1"
@@ -33,10 +34,10 @@
             	        
 		        <ImageView
 		            android:id="@+id/tab_newsfeed"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
+		            android:layout_width="24dp"
+		            android:layout_height="17dp"
 		            android:layout_centerHorizontal="true"
-		            android:src="@drawable/newsfeed" />
+		            android:background="@drawable/newsfeed" />
 	
 		        <TextView
 		            android:id="@+id/tab_newsfeed_text"
@@ -44,17 +45,17 @@
 		            android:layout_height="wrap_content"
 		            android:layout_below="@+id/tab_newsfeed"
 		            android:layout_centerHorizontal="true"
-		            android:layout_marginTop="3dp"
 		            android:text="@string/newsfeed_tab_title"
 		            android:textColor="@color/tab_button_pressed_text_color"
-		            android:textSize="12sp" />
+		            android:textSize="10sp" />
             </RelativeLayout>
     	</RelativeLayout>
         
         <RelativeLayout
 	        android:id="@+id/tab_notification_content"
 	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
+	        android:layout_height="46dp"
+	        android:layout_gravity="bottom"
 	        android:layout_weight="1">
 	        <RelativeLayout
 		        android:id="@+id/tab_notification_content1"
@@ -63,10 +64,10 @@
 		        android:layout_centerInParent="true">
 	            <ImageView
 		            android:id="@+id/tab_notification"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
+		            android:layout_width="18dp"
+		            android:layout_height="19dp"
 		            android:layout_centerHorizontal="true"
-		            android:src="@drawable/notification" />
+		            android:background="@drawable/notification" />
 	
 	            <TextView
 		            android:id="@+id/tab_notification_text"
@@ -74,10 +75,9 @@
 		            android:layout_height="wrap_content"
 		            android:layout_below="@+id/tab_notification"
 		            android:layout_centerHorizontal="true"
-		            android:layout_marginTop="3dp"
 		            android:text="@string/notification_tab_title"
 		            android:textColor="@color/tab_button_disable_text_color"
-		            android:textSize="12sp" />
+		            android:textSize="10sp" />
             </RelativeLayout>
     	</RelativeLayout>
             
@@ -88,12 +88,13 @@
 	        android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:src="@drawable/add_video" />
+            android:background="@drawable/add_video" />
 
         <RelativeLayout
 	        android:id="@+id/tab_profile_content"
 	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
+	        android:layout_height="46dp"
+	        android:layout_gravity="bottom"
 	        android:layout_weight="1">
             <RelativeLayout
 		        android:id="@+id/tab_profile_content1"
@@ -102,10 +103,10 @@
 		        android:layout_centerInParent="true">
 			    <ImageView
 		            android:id="@+id/tab_profile"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
+		            android:layout_width="20dp"
+		            android:layout_height="20dp"
 		            android:layout_centerHorizontal="true"
-		            android:src="@drawable/profile" />
+		            android:background="@drawable/profile" />
 	
 	            <TextView
 		            android:id="@+id/tab_profile_text"
@@ -113,10 +114,9 @@
 		            android:layout_height="wrap_content"
 		            android:layout_below="@+id/tab_profile"
 		            android:layout_centerHorizontal="true"
-		            android:layout_marginTop="3dp"
 		            android:text="@string/profile_tab_title"
 		            android:textColor="@color/tab_button_disable_text_color"
-		            android:textSize="12sp" />
+		            android:textSize="10sp" />
                 
             </RelativeLayout>
             
@@ -124,7 +124,8 @@
         <RelativeLayout
 	        android:id="@+id/tab_settings_content"
 	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
+	        android:layout_height="46dp"
+	        android:layout_gravity="bottom"
 	        android:layout_weight="1"
 	    	>
 	        
@@ -136,10 +137,10 @@
 	    	
 	        <ImageView
 	            android:id="@+id/tab_settings"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+	            android:layout_width="20dp"
+	            android:layout_height="20dp"
     	        android:layout_centerHorizontal="true"
-	            android:src="@drawable/settings_disable" />
+	            android:background="@drawable/settings_disable" />
 
 	        <TextView
 	            android:id="@+id/tab_settings_text"
@@ -147,10 +148,10 @@
 	            android:layout_height="wrap_content"
 	            android:layout_below="@+id/tab_settings"
 	            android:layout_centerHorizontal="true"
-	            android:layout_marginTop="3dp"
+	            
 	            android:text="@string/settings_tab_title"
 	            android:textColor="@color/tab_button_disable_text_color"
-	            android:textSize="12sp" />
+	            android:textSize="10sp" />
 	        </RelativeLayout>
         </RelativeLayout>
 

@@ -2,12 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-        
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
         <RelativeLayout
-            android:id="@+id/navbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/navbar_height"
-            >
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -17,34 +21,29 @@
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="119dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:background="@drawable/wave" />
             
             <ImageButton
-                android:id="@+id/settingsButton"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/settings" />
+                android:layout_marginStart="5dp"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/lft_arrow" />
             
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/navbarLayout"
-            android:background="#ffffff">
-            
-		    <ListView
-		        android:id="@+id/lv_post"
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
->
-		    </ListView>
-            
+            android:background="#ffffff"
+            android:layout_weight="1" >
         </RelativeLayout>
+        
+    </LinearLayout>
+
 </RelativeLayout>

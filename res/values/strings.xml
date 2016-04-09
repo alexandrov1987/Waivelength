@@ -19,5 +19,7 @@
     <string name="curpw_hint">Current Password</string>
     <string name="newpw_hint">New Password</string>
     <string name="confirmpw_hint">Confirm New Password</string>
-
+    <string name="likes_title">Likes</string>
+	<string name="comments_title">Comments</string>
+	
 </resources>

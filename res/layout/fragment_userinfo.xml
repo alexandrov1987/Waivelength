@@ -4,15 +4,11 @@
     android:layout_height="match_parent" >
     
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-
         <RelativeLayout
+            android:id="@+id/navbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
+            android:layout_height="@dimen/navbar_height"
+			>
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -28,24 +24,24 @@
                 android:layout_centerVertical="true"
                 android:text="@string/userinfo_title"
                 android:textColor="@color/title_text_color"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textSize="@dimen/navbar_title_text_size" />
             
             <ImageButton
                 android:id="@+id/closeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="12dp"
                 android:layout_alignParentStart="true"
                 android:background="@drawable/close" />
 
             <ImageButton
                 android:id="@+id/saveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="35dp"
+                android:layout_height="9dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="12dp"
                 android:background="@drawable/done" />
             
         </RelativeLayout>
@@ -53,8 +49,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/navbarLayout"
             android:background="#ffffff"
-            android:layout_weight="1" >
+            
+             >
 
             <ImageView
                 android:id="@+id/addPhotoButton"
@@ -79,6 +77,8 @@
                 android:hint="@string/email_hint"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
+                android:textColorHint="@color/hint_text_color"
+                android:textSize="@dimen/hint_text_size"
                 android:textStyle="italic" />
 
             <EditText
@@ -93,6 +93,8 @@
                 android:ems="10"
                 android:hint="@string/fullname_hint1"
                 android:singleLine="true"
+                android:textColorHint="@color/hint_text_color"
+                android:textSize="@dimen/hint_text_size"
                 android:textStyle="italic" >
 
             </EditText>
@@ -108,6 +110,8 @@
                 android:background="@drawable/input_bdr"
                 android:ems="10"
                 android:hint="@string/username_hint1"
+                android:textColorHint="@color/hint_text_color"
+                android:textSize="@dimen/hint_text_size"
                 android:singleLine="true"
                 android:textStyle="italic" >
 
@@ -125,6 +129,8 @@
                 android:ems="10"
                 android:hint="@string/curpw_hint"
                 android:inputType="textPassword"
+                android:textColorHint="@color/hint_text_color"
+                android:textSize="@dimen/hint_text_size"
                 android:singleLine="true"
                 android:textStyle="italic" >
 
@@ -142,6 +148,8 @@
                 android:ems="10"
                 android:hint="@string/newpw_hint"
                 android:inputType="textPassword"
+                android:textColorHint="@color/hint_text_color"
+                android:textSize="@dimen/hint_text_size"
                 android:singleLine="true"
                 android:textStyle="italic" >
 
@@ -158,14 +166,12 @@
                 android:ems="10"
                 android:hint="@string/confirmpw_hint"
                 android:inputType="textPassword"
+                android:textColorHint="@color/hint_text_color"
+                android:textSize="@dimen/hint_text_size"
                 android:singleLine="true"
                 android:textStyle="italic" >
 
             </EditText>
 
- 
-            
         </RelativeLayout>
-        
-    </LinearLayout>
 </RelativeLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@null">
+
+    <!-- <ProgressBar
+         android:id="@+id/progress"
+         style="@android:style/Widget.Holo.ProgressBar.Large"
+         android:layout_width="95dp"
+         android:layout_height="95dp"
+         android:layout_centerInParent="true"
+         android:background="@drawable/rounded_white_background"
+         android:indeterminate="true"
+         android:interpolator="@android:interpolator/linear"
+         android:indeterminateDrawable="@drawable/custom_progress" />-->
+
+    <RelativeLayout
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/rounded_progress_background">
+
+        <com.waivelength.ui.view.MaterialProgressBar
+            android:id="@+id/progress"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+</RelativeLayout>
