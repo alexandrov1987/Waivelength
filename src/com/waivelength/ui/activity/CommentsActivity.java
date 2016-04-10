@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,7 +125,9 @@ public class CommentsActivity extends Activity {
 		mAdapter = new CommentsArrayAdapter(this, R.layout.row_comment, mComments);
 		mListView = (ListView)findViewById(R.id.listView1);
 		mListView.setAdapter(mAdapter);
-		
+		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
+		mListView.setDividerHeight(0);
+
 		refreshComments();
 	}
 

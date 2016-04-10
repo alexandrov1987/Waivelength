@@ -9,6 +9,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 import com.waivelength.R;
+import com.waivelength.utils.DialogUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -170,8 +171,14 @@ public class SignupActivity extends Activity {
 		user.add("profileImage", conversionBitmapParseFile(this.mBitmap));
 		
 		if(Utility.isInternetAvailable(this)){
+			
+			DialogUtils.displayProgress(this);
+			
 			user.signUpInBackground(new SignUpCallback() {
 				public void done(ParseException e) {
+					
+					DialogUtils.closeProgress();
+					
 					if (e == null) {
 						ParseObject followersObject = new ParseObject("Followers");
 						followersObject.add("user", user);
@@ -185,6 +192,8 @@ public class SignupActivity extends Activity {
 
 						Utility.showErrorAlert(SignupActivity.this, "Error!", e.getMessage());
 					}
+					
+					
 				}
 			});
 		}else{

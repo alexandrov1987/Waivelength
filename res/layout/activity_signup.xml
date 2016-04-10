@@ -51,8 +51,8 @@
 
             <ImageView
                 android:id="@+id/addPhotoButton"
-                android:layout_width="85dp"
-                android:layout_height="85dp"
+                android:layout_width="@dimen/addphoto_btn_size"
+                android:layout_height="@dimen/addphoto_btn_size"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="31dp"

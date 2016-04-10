@@ -4,6 +4,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.waivelength.R;
+import com.waivelength.utils.DialogUtils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -65,19 +66,22 @@ public class SigninActivity extends Activity {
 		
 		if(Utility.isInternetAvailable(this)){
 			
+			DialogUtils.displayProgress(this);
 			ParseUser.logInInBackground(email, 
 					password, 
 					new LogInCallback() {
 				public void done(ParseUser user, ParseException e) {
-			     if (e == null && user != null) {
-			    	 
+					
+					DialogUtils.closeProgress();
+
+					if (e == null && user != null) {
+				    	 
 						Intent intent = new Intent(SigninActivity.this, TabBarFragmentActivity.class);
 						startActivity(intent);
 						finish();
-
-			     } else {
-			    	 Utility.showErrorAlert(SigninActivity.this, "Error!", e.getMessage());
-			     }
+					} else {
+						Utility.showErrorAlert(SigninActivity.this, "Error!", e.getMessage());
+					}
 			   }
 			 });
 			

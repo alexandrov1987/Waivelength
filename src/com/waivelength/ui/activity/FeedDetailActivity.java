@@ -28,6 +28,7 @@ public class FeedDetailActivity extends Activity {
 	private ImageButton 		mCommentButton = null;
 	private ImageButton 		mLikeButton = null;
 	private ImageButton			mBackButton = null;
+	private ImageButton 		mPlayButton = null;
 	private CircularImageView 	mProfileImageView = null;
 	private ImageView			mThumbnailImageview = null;
 	private TextView			mFullnameTextView = null;
@@ -48,6 +49,14 @@ public class FeedDetailActivity extends Activity {
         mViewCntTextView = (TextView)findViewById(R.id.viewsCntTextView);
         mCommentCntTextView = (TextView)findViewById(R.id.commentCntTextView);
         mLikeCntTextView = (TextView)findViewById(R.id.likeCntTextView);
+        
+        mPlayButton = (ImageButton)findViewById(R.id.playButton);
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			}
+		});
         
         mCommentButton = (ImageButton)findViewById(R.id.commentButton);
         mCommentButton.setOnClickListener(new View.OnClickListener() {

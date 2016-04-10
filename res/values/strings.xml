@@ -21,5 +21,8 @@
     <string name="confirmpw_hint">Confirm New Password</string>
     <string name="likes_title">Likes</string>
 	<string name="comments_title">Comments</string>
-	
+	<string name="connect_fb_btn_title">Connect Facebook</string>
+	<string name="connect_tw_btn_title">Connect Twitter</string>
+	<string name="connect_insta_btn_title">Connect Instagram</string>
+			
 </resources>

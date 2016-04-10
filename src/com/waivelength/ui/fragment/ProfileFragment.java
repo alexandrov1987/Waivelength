@@ -22,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,7 +37,10 @@ public class ProfileFragment extends Fragment {
 	private ImageView				mProfileImageView = null;
 	private TextView				mUsernameTextView = null;
 	private TextView				mFullnameTextView = null;
-	
+	private TextView				mFollowersTextView = null;
+	private TextView				mFollowingsTextView = null;
+	private ImageButton				mZoominButton = null;
+	private ImageButton				mZoomoutButton = null;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,6 +52,26 @@ public class ProfileFragment extends Fragment {
 		mProfileImageView = (ImageView)v.findViewById(R.id.profileImageView);
 		mUsernameTextView = (TextView)v.findViewById(R.id.usernameTextView);
 		mFullnameTextView = (TextView)v.findViewById(R.id.fullnameTextView);
+		mFollowersTextView = (TextView)v.findViewById(R.id.followersTextView);
+		mFollowingsTextView = (TextView)v.findViewById(R.id.followingTextView);
+		
+		mZoominButton = (ImageButton)v.findViewById(R.id.zoominButton);
+		mZoominButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+		
+		mZoomoutButton = (ImageButton)v.findViewById(R.id.zoomoutButton);
+		mZoomoutButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
 		
 		mWaives = new ArrayList<ParseObject>();
 		mWaivesWeekly = new ArrayList<ParseObject>();

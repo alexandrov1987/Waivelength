@@ -1,4 +1,6 @@
 package com.waivelength.ui.fragment;
+import java.io.File;
+
 import com.parse.LogInCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
@@ -9,9 +11,16 @@ import com.parse.SignUpCallback;
 import com.waivelength.R;
 import com.waivelength.ui.activity.TabBarFragmentActivity;
 import com.waivelength.ui.activity.Utility;
+import com.waivelength.ui.view.CircularImageView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +31,12 @@ import android.widget.ImageButton;
 
 public class UserinfoFragment extends Fragment {
 	
-	private TabBarFragmentActivity 	mParentActivity = null;
+	private static final int 		TAKE_PICTURE = 1;
+	private TabBarFragmentActivity 	mTab = null;
 	private ImageButton				mCloseButton = null;
 	private ImageButton				mSaveButton = null;
+	private ImageButton				mAddphotoButton = null;
+	private CircularImageView		mProfileImageView = null;
 	private EditText				mEmailText = null;
 	private EditText				mNameText = null;
 	private EditText				mUsernameText = null;
@@ -33,12 +45,15 @@ public class UserinfoFragment extends Fragment {
 	private EditText				mConfirmpwText = null;
 	private boolean					mIsFbUser = false;
 	private boolean 				mUserEnteredPassword = false;
-	
+	private int						mWhichButton = 0;
+	private Uri 					mImageUri;
+	private Bitmap					mBitmap = null;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		mParentActivity = (TabBarFragmentActivity)getActivity();
+		mTab = (TabBarFragmentActivity)getActivity();
 		View v = inflater.inflate(R.layout.fragment_userinfo, container, false);	
 		
 		mEmailText = (EditText)v.findViewById(R.id.emailText);
@@ -47,14 +62,26 @@ public class UserinfoFragment extends Fragment {
 		mCurpwText = (EditText)v.findViewById(R.id.pwText);
 		mNewpwText = (EditText)v.findViewById(R.id.repwText);
 		mConfirmpwText = (EditText)v.findViewById(R.id.confirmpwText);
+
+		mProfileImageView = (CircularImageView)v.findViewById(R.id.profileImageView);
+		mProfileImageView.setVisibility(View.GONE);
 		
+		mAddphotoButton = (ImageButton)v.findViewById(R.id.addPhotoButton);
+		mAddphotoButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				onClickAddPhoto();
+			}
+		});
+
 		mCloseButton = (ImageButton)v.findViewById(R.id.closeButton);
 		mCloseButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				mParentActivity.pop();
-				mParentActivity.fragmentReplace(mParentActivity.cur());
+				mTab.pop();
+				mTab.fragmentReplace(mTab.cur());
 			}
 		});
 		
@@ -98,19 +125,19 @@ public class UserinfoFragment extends Fragment {
 	private void onClickSave(){
 		
 		if(this.mEmailText.getText().toString().isEmpty()){
-			Utility.showErrorAlert(mParentActivity, "Email!", "Please enter your email.");
+			Utility.showErrorAlert(mTab, "Email!", "Please enter your email.");
 			return;
 		}
 		
 		if(this.mNameText.getText().toString().isEmpty()){
-			Utility.showErrorAlert(mParentActivity, "Name!", "Please enter your full name.");
+			Utility.showErrorAlert(mTab, "Name!", "Please enter your full name.");
 			return;
 		}
 
 		if(this.mUsernameText.getText().toString().isEmpty()){
 			
 			if(ParseUser.getCurrentUser().getString("facebookId").isEmpty()){
-				Utility.showErrorAlert(mParentActivity, "Username!", "Please enter a username.");
+				Utility.showErrorAlert(mTab, "Username!", "Please enter a username.");
 				return;
 			}
 		}
@@ -122,17 +149,17 @@ public class UserinfoFragment extends Fragment {
 				this.mUserEnteredPassword = true;
 				
 				if(!this.mNewpwText.getText().toString().equals(this.mConfirmpwText.getText().toString())){
-					Utility.showErrorAlert(mParentActivity, "Password Mismatch!", "Please check your password and try again.");
+					Utility.showErrorAlert(mTab, "Password Mismatch!", "Please check your password and try again.");
 					return;
 				}
 			}else if(this.mConfirmpwText.getText().toString().isEmpty()){
-				Utility.showErrorAlert(mParentActivity, "Confirm Password!", "Please confirm your password.");
+				Utility.showErrorAlert(mTab, "Confirm Password!", "Please confirm your password.");
 				return;
 			}else if(this.mNewpwText.getText().toString().isEmpty()){
-				Utility.showErrorAlert(mParentActivity, "Password!", "Please enter your new password.");
+				Utility.showErrorAlert(mTab, "Password!", "Please enter your new password.");
 				return;
 			}else if(this.mCurpwText.getText().toString().isEmpty()){
-				Utility.showErrorAlert(mParentActivity, "Password!", "Please enter your current password.");
+				Utility.showErrorAlert(mTab, "Password!", "Please enter your current password.");
 				return;
 			}
 		}
@@ -148,7 +175,7 @@ public class UserinfoFragment extends Fragment {
 		user.add("fullName", this.mNameText.getText().toString());
 		user.add("userWaivelengthName", this.mUsernameText.getText().toString());
 		
-		if(Utility.isInternetAvailable(this.mParentActivity)){
+		if(Utility.isInternetAvailable(this.mTab)){
 			
 			if(this.mUserEnteredPassword){
 				ParseUser.logInInBackground(user.getEmail(), this.mCurpwText.getText().toString(), new LogInCallback() {
@@ -163,15 +190,15 @@ public class UserinfoFragment extends Fragment {
 								public void done(ParseException e) {
 									
 									if(e != null){
-										Utility.showErrorAlert(mParentActivity, "Error!", e.getMessage());
+										Utility.showErrorAlert(mTab, "Error!", e.getMessage());
 									}else{
-										mParentActivity.pop();
-										mParentActivity.fragmentReplace(mParentActivity.cur());
+										mTab.pop();
+										mTab.fragmentReplace(mTab.cur());
 									}
 								}
 							});
 						} else {
-							Utility.showErrorAlert(mParentActivity, "Password!", "The current password you've entered does not match the one on record.");
+							Utility.showErrorAlert(mTab, "Password!", "The current password you've entered does not match the one on record.");
 						}
 					}
 				});
@@ -182,17 +209,57 @@ public class UserinfoFragment extends Fragment {
 					public void done(ParseException e) {
 						
 						if(e != null){
-							Utility.showErrorAlert(mParentActivity, "Error!", e.getMessage());
+							Utility.showErrorAlert(mTab, "Error!", e.getMessage());
 						}else{
-							mParentActivity.pop();
-							mParentActivity.fragmentReplace(mParentActivity.cur());
+							mTab.pop();
+							mTab.fragmentReplace(mTab.cur());
 						}
 					}
 				});
 			}
 		}else{
 			
-			Utility.showErrorAlert(mParentActivity, "No Network!", "You are not connected to internet. Please connect and try again.");
+			Utility.showErrorAlert(mTab, "No Network!", "You are not connected to internet. Please connect and try again.");
 		}
+	}
+	
+	private void onClickAddPhoto(){
+		
+		mWhichButton = 0;
+		final String items[] = { "Camera", "Photo Library" };
+        AlertDialog.Builder ab = new AlertDialog.Builder(mTab);
+        ab.setTitle("Add Profile Image");
+        ab.setSingleChoiceItems(items, mWhichButton,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    	mWhichButton = whichButton;
+                    }
+                }).setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    	switch(mWhichButton){
+                    	case 0:
+                    		takePhoto();
+                    		break;
+                    	case 1:
+                    		break;
+                    	}
+                    }
+                }).setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+        ab.show();
+	}
+	
+	public void takePhoto() {
+	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+	    File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
+	    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+	            Uri.fromFile(photo));
+	    this.mImageUri = Uri.fromFile(photo);
+	    startActivityForResult(intent, TAKE_PICTURE);
 	}
 }
