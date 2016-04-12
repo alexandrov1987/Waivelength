@@ -49,15 +49,23 @@
             android:background="#ffffff"
             >
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/addPhotoButton"
                 android:layout_width="@dimen/addphoto_btn_size"
                 android:layout_height="@dimen/addphoto_btn_size"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="31dp"
-                android:background="@drawable/add_photo" />
+                android:background="@drawable/add_photo_btn" />
 
+            <com.example.waive.ui.view.CircularImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="@dimen/addphoto_btn_size"
+                android:layout_height="@dimen/addphoto_btn_size"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="31dp"/>
+            
             <EditText
                 android:id="@+id/emailText"
                 android:layout_width="289dp"

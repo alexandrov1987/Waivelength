@@ -64,7 +64,7 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/add_photo" />
 
-            <com.waivelength.ui.view.CircularImageView
+            <com.example.waive.ui.view.CircularImageView
 	    	    android:id="@+id/profileImageView"
                 android:layout_width="@dimen/addphoto_btn_size"
                 android:layout_height="@dimen/addphoto_btn_size"

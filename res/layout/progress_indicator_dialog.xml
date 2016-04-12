@@ -10,7 +10,7 @@
         android:layout_centerInParent="true"
         android:background="@drawable/rounded_progress_background">
 
-        <com.waivelength.ui.view.MaterialProgressBar
+        <com.example.waive.ui.view.MaterialProgressBar
             android:id="@+id/progress"
             android:layout_width="30dp"
             android:layout_height="30dp"

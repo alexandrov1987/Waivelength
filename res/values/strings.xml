@@ -20,9 +20,12 @@
     <string name="newpw_hint">New Password</string>
     <string name="confirmpw_hint">Confirm New Password</string>
     <string name="likes_title">Likes</string>
+    <string name="followers_title">Followers</string>
+    <string name="findpeople_title">Find People To Follow</string>
 	<string name="comments_title">Comments</string>
 	<string name="connect_fb_btn_title">Connect Facebook</string>
 	<string name="connect_tw_btn_title">Connect Twitter</string>
 	<string name="connect_insta_btn_title">Connect Instagram</string>
+	<string name="facebook_app_id ">1585892508388285</string>
 			
 </resources>

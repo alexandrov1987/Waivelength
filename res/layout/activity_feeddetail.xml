@@ -39,7 +39,7 @@
         android:layout_height="66dp"
         android:layout_below="@+id/navbarLayout">
         
-        <com.waivelength.ui.view.CircularImageView
+        <com.example.waive.ui.view.CircularImageView
     	    android:id="@+id/profileImageView"
         	android:layout_width="@dimen/list_profile_image_size"
          	android:layout_height="@dimen/list_profile_image_size"
@@ -106,7 +106,23 @@
            android:layout_height="76dp"
            android:layout_centerInParent="true"
            android:background="@drawable/play_icon_big" />
+
+       <TextView
+           android:id="@+id/progressTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_centerInParent="true"/>
        
+       <VideoView
+           android:id="@+id/videoView"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_alignParentBottom="true"
+   			android:layout_alignParentLeft="true"
+   			android:layout_alignParentRight="true"
+   			android:layout_alignParentTop="true">
+           
+       </VideoView>
    </RelativeLayout>
    <RelativeLayout
        android:id="@+id/middlebarLayout"
@@ -125,14 +141,14 @@
            android:text="0 views"
            android:textColor="#686868" />
 
-       <ImageView
-           android:id="@+id/imageView4"
+       <ImageButton
+           android:id="@+id/flagButton"
            android:layout_width="13dp"
            android:layout_height="18dp"
            android:layout_centerVertical="true"
            android:layout_toEndOf="@+id/viewsCntTextView"
            android:layout_marginStart="10dp"
-           android:src="@drawable/flag" />
+           android:background="@drawable/flag" />
        
    	</RelativeLayout>
     <RelativeLayout

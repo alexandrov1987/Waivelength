@@ -6,7 +6,7 @@
     android:paddingBottom="10dp"
     android:background="@color/newsfeed_row_bg_color" >
     
-	<com.waivelength.ui.view.CircularImageView
+	<com.example.waive.ui.view.CircularImageView
          android:id="@+id/profileImageView"
       	 android:layout_width="@dimen/list_profile_image_size"
 	     android:layout_height="@dimen/list_profile_image_size"

@@ -6,4 +6,5 @@
     <dimen name="list_profile_image_size">55dp</dimen>
     <dimen name="addphoto_btn_size">80dp</dimen>
     <dimen name="list_fullname_text_size">16sp</dimen>
+    <dimen name="feed_videothumb_size">98dp</dimen>
 </resources>
