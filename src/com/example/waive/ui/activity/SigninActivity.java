@@ -18,8 +18,6 @@ import android.widget.ImageButton;
 
 public class SigninActivity extends Activity {
 
-	private ImageButton mBackButton = null;
-	private ImageButton mDoneButton = null;
 	private EditText 	mEmailText = null;
 	private EditText	mPwText = null;
 
@@ -31,8 +29,8 @@ public class SigninActivity extends Activity {
         mEmailText = (EditText)findViewById(R.id.emailText);
         mPwText = (EditText)findViewById(R.id.pwText);
         
-        mBackButton = (ImageButton)findViewById(R.id.backButton);
-        mBackButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton backButton = (ImageButton)findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -40,8 +38,8 @@ public class SigninActivity extends Activity {
 			}
 		});
         
-        mDoneButton = (ImageButton)findViewById(R.id.doneButton);
-        mDoneButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton doneButton = (ImageButton)findViewById(R.id.doneButton);
+        doneButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -50,6 +48,12 @@ public class SigninActivity extends Activity {
 		});
     }
 	
+    @Override
+    protected void onStart() {
+        super.onStart();
+        overridePendingTransition(R.anim.anim_right_slide_in, R.anim.anim_left_slide_out);
+    }
+    
 	private void onClicDone(){
 
 		String email = this.mEmailText.getText().toString();

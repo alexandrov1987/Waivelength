@@ -1,5 +1,6 @@
 package com.example.waive.ui.fragment;
 
+
 import com.example.waive.ui.activity.TabBarActivity;
 import com.joanzapata.pdfview.PDFView;
 import com.example.waive.R;
@@ -8,29 +9,26 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 public class TermsFragment extends Fragment {
 
-	private TabBarActivity mParentActivity = null;
-	private ImageButton mBackButton = null;
-	private PDFView mPdfView = null;
+	private TabBarActivity mTabBar = null;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		mParentActivity = (TabBarActivity)getActivity();
+		mTabBar = (TabBarActivity)getActivity();
 		View v = inflater.inflate(R.layout.activity_terms, container, false);	
 
-		mBackButton = (ImageButton)v.findViewById(R.id.backButton);
-		mBackButton.setOnClickListener(new View.OnClickListener() {
+		ImageButton backButton = (ImageButton)v.findViewById(R.id.backButton);
+		backButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				mParentActivity.pop();
-				mParentActivity.fragmentReplace(mParentActivity.cur());
+				mTabBar.pop();
+				mTabBar.fragmentReplace(mTabBar.cur());
 			}
 		});
 		

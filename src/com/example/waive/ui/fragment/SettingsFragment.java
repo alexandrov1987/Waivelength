@@ -18,10 +18,7 @@ import android.widget.ImageButton;
 
 public class SettingsFragment extends Fragment {
 	
-	private TabBarActivity 	mTab = null;
-	private ImageButton				mSignoutButton = null;
-	private ImageButton				mUserinfoButton = null;
-	private ImageButton				mTermsButton = null;
+	private TabBarActivity 			mTab = null;
 	private ImageButton				mFbConnectButton = null;
 	private ImageButton				mTwConnectButton = null;
 	private ImageButton				mInstaConnectButton = null;
@@ -33,8 +30,8 @@ public class SettingsFragment extends Fragment {
 		mTab = (TabBarActivity)getActivity();
 		View v = inflater.inflate(R.layout.fragment_settings, container, false);	
 		
-		mSignoutButton = (ImageButton)v.findViewById(R.id.signoutButton);
-		mSignoutButton.setOnClickListener(new View.OnClickListener() {
+		ImageButton signoutButton = (ImageButton)v.findViewById(R.id.signoutButton);
+		signoutButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -54,8 +51,8 @@ public class SettingsFragment extends Fragment {
 			}
 		});
 		
-		mUserinfoButton = (ImageButton)v.findViewById(R.id.userinfoButton);
-		mUserinfoButton.setOnClickListener(new View.OnClickListener() {
+		ImageButton userinfoButton = (ImageButton)v.findViewById(R.id.userinfoButton);
+		userinfoButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -64,8 +61,8 @@ public class SettingsFragment extends Fragment {
 			}
 		});
 		
-		mTermsButton = (ImageButton)v.findViewById(R.id.termsButton);
-		mTermsButton.setOnClickListener(new View.OnClickListener() {
+		ImageButton termsButton = (ImageButton)v.findViewById(R.id.termsButton);
+		termsButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

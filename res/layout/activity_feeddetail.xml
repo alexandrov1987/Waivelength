@@ -54,8 +54,10 @@
           android:layout_toEndOf="@+id/profileImageView"
           android:layout_centerVertical="true"
           android:layout_marginStart="11dp"
+          android:clickable="true"
           android:lines="1"
           android:text="Stephen Holdsworth"
+          android:textStyle="bold"
           android:textColor="@color/newsfeed_row_fullname_text_color"
           android:textSize="@dimen/list_fullname_text_size" />
 
@@ -79,6 +81,7 @@
 			    android:layout_height="wrap_content"
 			    android:layout_centerVertical="true"
 			    android:layout_toEndOf="@+id/imageView3"
+			    android:layout_marginStart="2dp"
 			    android:gravity="start"
 			    android:textSize="12sp"
 			    android:text="1h" />
@@ -118,8 +121,8 @@
            android:layout_width="match_parent"
            android:layout_height="match_parent"
            android:layout_alignParentBottom="true"
-   			android:layout_alignParentLeft="true"
-   			android:layout_alignParentRight="true"
+   			android:layout_alignParentStart="true"
+   			android:layout_alignParentEnd="true"
    			android:layout_alignParentTop="true">
            
        </VideoView>

@@ -26,13 +26,11 @@
             
         </RelativeLayout>
 
-        <RelativeLayout
+        <ListView
+            android:id="@+id/listView1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/navbarLayout"
-            android:background="#ffffff">
-            
-
-        </RelativeLayout>
+            android:background="#ffffff"/>
     
 </RelativeLayout>

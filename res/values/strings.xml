@@ -27,5 +27,5 @@
 	<string name="connect_tw_btn_title">Connect Twitter</string>
 	<string name="connect_insta_btn_title">Connect Instagram</string>
 	<string name="facebook_app_id ">1585892508388285</string>
-			
+	<string name="comment_hint">Leave a Comment</string>			
 </resources>

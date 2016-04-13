@@ -12,15 +12,13 @@ import android.widget.ImageButton;
 
 public class TermsActivity extends Activity {
 
-	private ImageButton mBackButton = null;
-	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_terms);
         
-        mBackButton = (ImageButton)findViewById(R.id.backButton);
-        mBackButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton backButton = (ImageButton)findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

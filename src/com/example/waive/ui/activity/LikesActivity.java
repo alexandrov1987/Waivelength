@@ -1,24 +1,18 @@
 package com.example.waive.ui.activity;
 
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.example.waive.datamodel.DataManager;
+import com.example.waive.ui.adapter.LikeAdapter;
 import com.example.waive.ui.view.CircularImageView;
 import com.example.waive.utils.DialogUtils;
 import com.example.waive.utils.NetworkUtils;
-import com.parse.CountCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.example.waive.R;
-
-
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -36,68 +30,10 @@ import android.widget.TextView;
 public class LikesActivity extends Activity {
 
 	private List<ParseObject> 		mLikes = null;
-	private ImageButton 			mBackButton = null;
 	private ListView				mListView = null;
 	private ParseObject				mWaive = null;
-    private LikesArrayAdapter 		mAdapter = null;
-    
-    private class LikesArrayAdapter extends ArrayAdapter<ParseObject>{
-    	
-    	private Context context;
-    	private List<ParseObject> items;
-    	private int rsrc;
-    	
-		public LikesArrayAdapter(Context context, int resource, List<ParseObject> objects) {
-			super(context, resource, objects);
-			
-			this.context = context;
-			this.items = objects;
-			this.rsrc = resource;
-		}
+    private LikeAdapter 			mAdapter = null;
 
-		@Override
-		public View getView(final int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			
-			if (v == null) {
-				LayoutInflater li = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = li.inflate(rsrc, null);
-			} 
-			
-			ParseObject likingUser = items.get(position);
-			
-			if(likingUser != null){
-			
-				try {
-					likingUser.fetchIfNeeded();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				final CircularImageView profileImageView = (CircularImageView)v.findViewById(R.id.profileImageView);
-				profileImageView.setBorderWidth(0);
-				ParseFile thumbnailFile = likingUser.getParseFile("profileImage");
-				
-				thumbnailFile.getDataInBackground(new GetDataCallback() {
-
-                    @Override
-                    public void done(byte[] data, ParseException e) {
-                        Bitmap bitpic = BitmapFactory.decodeByteArray(data, 0, data.length);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitpic.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        profileImageView.setImageBitmap(bitpic);
-                    }
-                });
-				
-				TextView fullnameTextView = (TextView)v.findViewById(R.id.like_fullnameTextview);
-				fullnameTextView.setText(likingUser.getString("fullName"));
-			}
-	
-			return v;
-		}
-    }
-    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -109,8 +45,8 @@ public class LikesActivity extends Activity {
 		mLikes = new ArrayList<ParseObject>();
 		mWaive = DataManager.sharedInstance().mWaives.get(index);
 
-		mBackButton = (ImageButton)findViewById(R.id.backButton);
-		mBackButton.setOnClickListener(new View.OnClickListener() {
+		ImageButton backButton = (ImageButton)findViewById(R.id.backButton);
+		backButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -118,7 +54,7 @@ public class LikesActivity extends Activity {
 			}
 		});
 		
-		mAdapter = new LikesArrayAdapter(this, R.layout.row_like, mLikes);
+		mAdapter = new LikeAdapter(this, R.layout.row_like, mLikes);
 		mListView = (ListView)findViewById(R.id.listView1);
 		mListView.setAdapter(mAdapter);
 		mListView.setDivider(new ColorDrawable(android.R.color.transparent));

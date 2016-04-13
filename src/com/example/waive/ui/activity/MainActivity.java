@@ -93,6 +93,12 @@ public class MainActivity extends Activity {
 //        initializeFaceBook();
     }
 	
+    @Override
+    protected void onStart() {
+        super.onStart();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+    }
+
 //	@Override
 //	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 //		super.onActivityResult(requestCode, resultCode, data);

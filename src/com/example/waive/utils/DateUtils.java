@@ -161,4 +161,33 @@ public class DateUtils {
         // To get number of minutes diff/(1000 * 60)
         // To get number of hours diff/(1000 * 60 * 60)
     }
+    
+    public static int calculate(Date fromDate, Date toDate) {
+		long diff = 0;
+		// Convert to Date
+		Calendar c1 = Calendar.getInstance();
+		// Change to Calendar Date
+		c1.setTime(fromDate);
+		
+		Calendar c2 = Calendar.getInstance();
+		// Change to Calendar Date
+		c2.setTime(toDate);
+		
+		// get Time in milli seconds
+		long ms1 = c1.getTimeInMillis();
+		long ms2 = c2.getTimeInMillis();
+		// get difference in milli seconds
+		diff = ms2 - ms1;
+		
+		// Find number of days by dividing the mili seconds
+		int diffInHours = (int) (diff / (1000 * 60));
+		return diffInHours;
+		
+		// To get number of seconds diff/1000
+		// To get number of minutes diff/(1000 * 60)
+		// To get number of hours diff/(1000 * 60 * 60)
+		// To get number of days diff/(1000 * 60 * 60)
+
+    }
+    
 }

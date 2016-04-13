@@ -1,13 +1,12 @@
 package com.example.waive.ui.activity;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.List;
-
 import com.example.waive.datamodel.DataManager;
 import com.example.waive.ui.view.CircularImageView;
+import com.example.waive.utils.DialogUtils;
+import com.example.waive.utils.NetworkUtils;
 import com.parse.CountCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -17,11 +16,11 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.example.waive.R;
-
-
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +28,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -45,6 +45,7 @@ public class FeedDetailActivity extends Activity {
 	private TextView			mCommentCntTextView = null;
 	private TextView			mLikeCntTextView = null;
 	private TextView			mProgressTextView = null;
+	private TextView 			mTimeTextView = null;
 	private VideoView			mVideoView = null;
 	private boolean				mIsDownloadingVideo = false;
 	private ParseObject			mWaive = null;
@@ -59,20 +60,38 @@ public class FeedDetailActivity extends Activity {
         mContext = this;
         mProfileImageView = (CircularImageView)findViewById(R.id.profileImageView);
         mThumbnailImageview = (ImageView)findViewById(R.id.thumbnailImageView);
-        mFullnameTextView = (TextView)findViewById(R.id.detailfullnameTextview);
         mViewCntTextView = (TextView)findViewById(R.id.viewsCntTextView);
         mCommentCntTextView = (TextView)findViewById(R.id.commentCntTextView);
         mLikeCntTextView = (TextView)findViewById(R.id.likeCntTextView);
+        mTimeTextView = (TextView)findViewById(R.id.timeTextView);
         mProgressTextView = (TextView)findViewById(R.id.progressTextView);
         mProgressTextView.setVisibility(View.GONE);
-        mVideoView = (VideoView)findViewById(R.id.videoView);
+
+        mFullnameTextView = (TextView)findViewById(R.id.detailfullnameTextview);
+        mFullnameTextView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				ParseObject waive = mWaive;
+				ParseObject user = waive.getParseObject("user");
+				
+				if(user.equals(ParseUser.getCurrentUser())){
+					
+					
+				}else{
+					
+				}
+			}
+		});
         
+        mVideoView = (VideoView)findViewById(R.id.videoView);
         mVideoView.setVisibility(View.GONE);
         mVideoView.setOnPreparedListener(new OnPreparedListener(){
 
 			@Override
 			public void onPrepared(MediaPlayer mp) {
-				mVideoView.start();  
+				
 			}
         });
         
@@ -126,6 +145,7 @@ public class FeedDetailActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				mVideoView.stopPlayback();
 				finish();
 			}
 		});
@@ -135,7 +155,17 @@ public class FeedDetailActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
+		        AlertDialog.Builder ab = new AlertDialog.Builder(FeedDetailActivity.this);
+		        ab.setMessage("Are you sure you want to flag this waive as inapproriate?");
+		        ab.setNegativeButton("Don't Flag", null);
+		        ab.setPositiveButton("Flag", new OnClickListener(){
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						mWaive.addUnique("inAppropriate", ParseUser.getCurrentUser());
+						mWaive.saveInBackground();
+					}
+		        });
+		        ab.show();
 			}
 		});
 
@@ -156,27 +186,21 @@ public class FeedDetailActivity extends Activity {
 		}
         
         ParseFile userImageFile = waiver.getParseFile("profileImage");
-        
         userImageFile.getDataInBackground(new GetDataCallback() {
 
             @Override
             public void done(byte[] data, ParseException e) {
                 Bitmap bitpic = BitmapFactory.decodeByteArray(data, 0, data.length);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitpic.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 mProfileImageView.setImageBitmap(bitpic);
             }
         });
         
         ParseFile videoThumbnailFile = mWaive.getParseFile("thumbnail");
-        
         videoThumbnailFile.getDataInBackground(new GetDataCallback() {
 
             @Override
             public void done(byte[] data, ParseException e) {
                 Bitmap bitpic = BitmapFactory.decodeByteArray(data, 0, data.length);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitpic.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 mThumbnailImageview.setImageBitmap(bitpic);
             }
         });
@@ -194,17 +218,34 @@ public class FeedDetailActivity extends Activity {
         	mLikeCntTextView.setText(String.valueOf(likingUsers.size()));
         else
         	mLikeCntTextView.setText("0");
-        
-        ParseQuery<ParseObject> commentsQuery = ParseQuery.getQuery("Comment");
-		commentsQuery.whereEqualTo("waive", mWaive);
-		commentsQuery.countInBackground(new CountCallback() {
-			@Override
-			public void done(int count, ParseException e) {
-				mCommentCntTextView.setText(String.valueOf(count));
-			}
-		 });
+		
+		mTimeTextView.setText(mWaive.getInt("duration") + " sec");
     }
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		if(NetworkUtils.isInternetAvailable(this)){
+	        ParseQuery<ParseObject> commentsQuery = ParseQuery.getQuery("Comment");
+			commentsQuery.whereEqualTo("waive", mWaive);
+			commentsQuery.countInBackground(new CountCallback() {
+				@Override
+				public void done(int count, ParseException e) {
+					mCommentCntTextView.setText(String.valueOf(count));
+				}
+			 });
+		}else{
+			DialogUtils.showErrorAlert(this, "No Internet", "You are not connected to internet. Please connect and try again.");
+		}
+	}
+
+	
+	@Override
+	public void onBackPressed() {
+//		super.onBackPressed();
+	}
+
 	void downloadVideo(){
 		
 		mIsDownloadingVideo = true;
@@ -214,8 +255,7 @@ public class FeedDetailActivity extends Activity {
 			@Override
 			public void done(byte[] data, ParseException e) {
 				
-				File path = mContext.getFilesDir();
-				File file = new File(path, "current_video.mp4");
+				File file = new File(Environment.getExternalStorageDirectory(),  "waivelength_video.mp4");
 				FileOutputStream stream;
 				
 				try {
@@ -231,7 +271,7 @@ public class FeedDetailActivity extends Activity {
 				mThumbnailImageview.setVisibility(View.GONE);
 				mVideoView.setVisibility(View.VISIBLE);
 				mVideoView.setVideoPath(file.getAbsolutePath());
-				
+				mVideoView.start();  
 			}
 		}, new ProgressCallback(){
 			@Override
@@ -240,6 +280,9 @@ public class FeedDetailActivity extends Activity {
 				mProgressTextView.setText(progress + " %");
 				
 				if(progress == 100){
+					
+					mIsDownloadingVideo = false;
+					
 					mWaive.addUnique("numberOfViews", ParseUser.getCurrentUser());
 					mWaive.saveInBackground();
 				}
