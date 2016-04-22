@@ -9,4 +9,8 @@
     <color name="hint_text_color">#a4a9a7</color>
     <color name="username_text_color">#015983</color>
     <color name="primary">#ffffff</color>
+    <color name="filter_select_bg_color">#5ac7aa</color>
+    <color name="filter_bg_color">#ffffff</color>
+    <color name="filter_select_text_color">#ffffff</color>
+    <color name="filter_text_color">#445252</color>
 </resources>

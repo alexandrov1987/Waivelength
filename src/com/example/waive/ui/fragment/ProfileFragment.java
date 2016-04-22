@@ -1,7 +1,15 @@
 package com.example.waive.ui.fragment;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.example.waive.datamodel.DataManager;
 import com.example.waive.ui.activity.FeedDetailActivity;
 import com.example.waive.ui.activity.TabBarActivity;
 import com.example.waive.ui.adapter.FeedAdapter;
@@ -34,10 +42,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ProfileFragment extends Fragment {
 	
-	private TabBarActivity 	mTab = null;
-	private ArrayList<ParseObject>	mWaives = null;
-	private ArrayList<ParseObject>	mWaivesWeekly = null;
-	private ArrayList<ParseObject>	mWaivesMonthly = null;
+	private TabBarActivity 			mTab = null;
 	private ParseUser				mUser = null;
 	
 	private ImageView				mProfileImageView = null;
@@ -84,7 +89,13 @@ public class ProfileFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				
+				if(mZoomValue > 1){
+					mZoomValue--;
+					mListView.setAdapter(null);
+					mAdapter.setZoom(mZoomValue);
+					mListView.setAdapter(mAdapter);
+					mAdapter.notifyDataSetChanged();
+				}
 			}
 		});
 		
@@ -93,33 +104,42 @@ public class ProfileFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				
+				if(mZoomValue < 3){
+					mZoomValue++;
+					mListView.setAdapter(null);
+					mAdapter.setZoom(mZoomValue);
+					mListView.setAdapter(mAdapter);
+					mAdapter.notifyDataSetChanged();
+				}
 			}
 		});
 		
-		mWaives = new ArrayList<ParseObject>();
-		mWaivesWeekly = new ArrayList<ParseObject>();
-		mWaivesMonthly = new ArrayList<ParseObject>();
+		mZoomValue = 1;
+		mAdapter = new FeedAdapter(mTab, R.layout.feed_row, R.layout.feed_row1, 
+				R.layout.feed_row2, R.layout.feed_row2, mZoomValue, 
+				DataManager.sharedInstance().mWaivesOfProfile, 
+				DataManager.sharedInstance().mWaivesWeeklyOfProfile, 
+				DataManager.sharedInstance().mWaivesMonthlyOfProfile, mTab);
 		
-		this.mAdapter = new FeedAdapter(mTab, R.layout.feed_row, R.layout.feed_row1, mWaives, mTab);
-		this.mListView = (ListView)v.findViewById(R.id.lv_post);
-		this.mListView.setDivider(new ColorDrawable(android.R.color.transparent));
-		this.mListView.setDividerHeight(0);
-		this.mListView.setAdapter(this.mAdapter);
-		this.mListView.setOnItemClickListener(new OnItemClickListener(){
+		mListView = (ListView)v.findViewById(R.id.lv_post);
+		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
+		mListView.setDividerHeight(0);
+		mListView.setAdapter(this.mAdapter);
+		mListView.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				Intent intent = new Intent(mTab, FeedDetailActivity.class);
-				intent.putExtra("index", position);
-				startActivity(intent);
+				if(mZoomValue == 1){
+					Intent intent = new Intent(mTab, FeedDetailActivity.class);
+					intent.putExtra("index", position);
+					intent.putExtra("ownerController", "P");
+					startActivity(intent);
+				}
 			}
 		});
 
-		refreshProfile();
-		
         return v;
 	}
 
@@ -127,9 +147,11 @@ public class ProfileFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		
-		mWaives.removeAll(mWaives);
-		mWaivesWeekly.removeAll(mWaivesWeekly);
-		mWaivesMonthly.removeAll(mWaivesMonthly);
+		DataManager.sharedInstance().mWaivesOfProfile.removeAll(DataManager.sharedInstance().mWaivesOfProfile);
+		DataManager.sharedInstance().mWaivesWeeklyOfProfile.removeAll(DataManager.sharedInstance().mWaivesWeeklyOfProfile);
+		DataManager.sharedInstance().mWaivesMonthlyOfProfile.removeAll(DataManager.sharedInstance().mWaivesMonthlyOfProfile);
+		
+		refreshProfile();
 	}
 	
 	void refreshProfile(){
@@ -180,12 +202,13 @@ public class ProfileFragment extends Fragment {
 							}
 			        	 }
 			        	 
-			        	 mWaives.removeAll(mWaives);
-			        	 mWaivesMonthly.removeAll(mWaivesMonthly);
-			        	 mWaivesWeekly.removeAll(mWaivesWeekly);
+			     		DataManager.sharedInstance().mWaivesOfProfile.removeAll(DataManager.sharedInstance().mWaivesOfProfile);
+			    		DataManager.sharedInstance().mWaivesWeeklyOfProfile.removeAll(DataManager.sharedInstance().mWaivesWeeklyOfProfile);
+			    		DataManager.sharedInstance().mWaivesMonthlyOfProfile.removeAll(DataManager.sharedInstance().mWaivesMonthlyOfProfile);
 			        	 
 			        	 if(objects.size() > 0){
-				        	 mWaives.addAll(objects);
+			        		 DataManager.sharedInstance().mWaivesOfProfile.addAll(objects);
+				        	 fillWeeklyAndMonthlyArrays();
 			        	 }
 			        	 
 			        	 mAdapter.notifyDataSetChanged();
@@ -254,5 +277,130 @@ public class ProfileFragment extends Fragment {
 			mFollowingsTextView.setText(String.valueOf(followings.size()));
 		else
 			mFollowingsTextView.setText("0");
+	}
+	
+	void fillWeeklyAndMonthlyArrays(){
+		
+		DataManager.sharedInstance().mWaivesWeeklyOfProfile.removeAll(DataManager.sharedInstance().mWaivesWeeklyOfProfile);
+		DataManager.sharedInstance().mWaivesMonthlyOfProfile.removeAll(DataManager.sharedInstance().mWaivesMonthlyOfProfile);
+		
+		Date firstWaveDate = ((ParseObject)DataManager.sharedInstance().mWaivesOfProfile.get(0)).getCreatedAt();
+		Calendar cal = new GregorianCalendar();
+		cal.setFirstDayOfWeek(1);
+		cal.setTime(firstWaveDate);
+		
+		int weekOfWaive = cal.get(Calendar.WEEK_OF_YEAR);
+		ArrayList<ParseObject> sameWeekWaives = new ArrayList<ParseObject>();
+		String weekSectionHeaderString = this.getSectionHeaderString(firstWaveDate, false);
+		Map <String,ArrayList<ParseObject>> dict =  new HashMap<String,ArrayList<ParseObject>>();
+		
+		for(int i = 0; i < DataManager.sharedInstance().mWaivesOfProfile.size(); i++){
+			
+			ParseObject waive = DataManager.sharedInstance().mWaivesOfProfile.get(i);
+			cal.setTime(waive.getCreatedAt());
+            
+            if(cal.get(Calendar.WEEK_OF_YEAR) == weekOfWaive){
+            	
+            	sameWeekWaives.add(waive);
+            	
+            	if(i == DataManager.sharedInstance().mWaivesOfProfile.size() - 1){
+            		dict.put(weekSectionHeaderString, sameWeekWaives);
+            		DataManager.sharedInstance().mWaivesWeeklyOfProfile.add(dict);
+            	}
+            }else{
+
+                weekOfWaive = cal.get(Calendar.WEEK_OF_YEAR);
+        		dict.put(weekSectionHeaderString, sameWeekWaives);
+        		DataManager.sharedInstance().mWaivesWeeklyOfProfile.add(dict);
+
+        		weekSectionHeaderString = this.getSectionHeaderString(waive.getCreatedAt(), false);
+        		dict = new HashMap<String,ArrayList<ParseObject>>();
+        		sameWeekWaives = new ArrayList<ParseObject>();
+        		sameWeekWaives.add(waive);
+        		
+        		if(i == DataManager.sharedInstance().mWaivesOfProfile.size() - 1){
+        			dict.put(weekSectionHeaderString, sameWeekWaives);
+        			DataManager.sharedInstance().mWaivesWeeklyOfProfile.add(dict);
+        		}
+            }
+		}
+		
+		int monthOfWaive = cal.get(Calendar.MONTH);
+		ArrayList<ParseObject> sameMonthWaives = new ArrayList<ParseObject>();
+		String monthSectionHeaderString = this.getSectionHeaderString(firstWaveDate, true);
+		Map <String,ArrayList<ParseObject>> dictMonth =  new HashMap<String,ArrayList<ParseObject>>();
+		
+		for(int i = 0; i < DataManager.sharedInstance().mWaivesOfProfile.size(); i++){
+			
+			ParseObject waive = DataManager.sharedInstance().mWaivesOfProfile.get(i);
+			cal.setTime(waive.getCreatedAt());
+            
+            if(cal.get(Calendar.MONTH) == monthOfWaive){
+            	
+            	sameMonthWaives.add(waive);
+            	
+            	if(i == DataManager.sharedInstance().mWaivesOfProfile.size() - 1){
+            		dictMonth.put(monthSectionHeaderString, sameMonthWaives);
+            		DataManager.sharedInstance().mWaivesMonthlyOfProfile.add(dictMonth);
+            	}
+            }else{
+
+                monthOfWaive = cal.get(Calendar.MONTH);
+                dictMonth.put(monthSectionHeaderString, sameMonthWaives);
+                DataManager.sharedInstance().mWaivesMonthlyOfProfile.add(dictMonth);
+
+        		monthSectionHeaderString = this.getSectionHeaderString(waive.getCreatedAt(), true);
+        		dictMonth = new HashMap<String,ArrayList<ParseObject>>();
+        		sameMonthWaives = new ArrayList<ParseObject>();
+        		sameMonthWaives.add(waive);
+        		
+        		if(i == DataManager.sharedInstance().mWaivesOfProfile.size() - 1){
+        			dictMonth.put(monthSectionHeaderString, sameMonthWaives);
+        			DataManager.sharedInstance().mWaivesMonthlyOfProfile.add(dictMonth);
+        		}
+            }
+		}
+		
+	}
+	
+	String getSectionHeaderString(Date date, boolean forMonth){
+		
+		Calendar c = new GregorianCalendar();
+		c.setFirstDayOfWeek(1);
+		
+		Date now = date;
+		Date startOfTheWeek;
+		Date endOfWeek;
+
+		c.setTime(now);
+		
+		Calendar c1 = Calendar.getInstance();
+		c1.clear();
+        c1.set(Calendar.WEEK_OF_YEAR, c.get(Calendar.WEEK_OF_YEAR));
+        c1.set(Calendar.YEAR, c.get(Calendar.YEAR));
+
+        startOfTheWeek = c1.getTime();
+	    c1.add(Calendar.DATE, 6);
+	    endOfWeek = c1.getTime();
+	    
+	    SimpleDateFormat weekFormatter = null;
+	    
+	    if(forMonth){
+	    	weekFormatter = new SimpleDateFormat("MMMM yyyy");
+	    }else{
+	    	weekFormatter = new SimpleDateFormat("MMMM d");
+	    }
+	    
+	    weekFormatter.setCalendar(c);
+	    
+	    if(forMonth){
+	    	
+	    	return weekFormatter.format(date);
+	    }else{
+	    	String startOfWeekString = weekFormatter.format(startOfTheWeek);
+	    	String endOfWeekString = weekFormatter.format(endOfWeek);
+	    	String finalString = "Week Of: " + startOfWeekString + " - " + endOfWeekString;
+	    	return finalString;
+	    }
 	}
 }

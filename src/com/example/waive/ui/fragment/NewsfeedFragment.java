@@ -50,7 +50,8 @@ public class NewsfeedFragment extends Fragment {
 		this.mTab = (TabBarActivity)getActivity();
 		View v = inflater.inflate(R.layout.fragment_newsfeed, container, false);	
 
-		this.mAdapter = new FeedAdapter(mTab, R.layout.feed_row, R.layout.feed_row1, DataManager.sharedInstance().mWaives, mTab);
+		this.mAdapter = new FeedAdapter(mTab, R.layout.feed_row, R.layout.feed_row1, R.layout.feed_row2, R.layout.feed_row2,
+				1, DataManager.sharedInstance().mWaives, null, null, mTab);
 
 		this.mListView = (ListView)v.findViewById(R.id.lv_post);
 		this.mListView.setDivider(new ColorDrawable(android.R.color.transparent));
@@ -64,6 +65,7 @@ public class NewsfeedFragment extends Fragment {
 
 				Intent intent = new Intent(mTab, FeedDetailActivity.class);
 				intent.putExtra("index", position);
+				intent.putExtra("ownerController", "N");
 				startActivity(intent);
 			}
 		});

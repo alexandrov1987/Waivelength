@@ -27,5 +27,20 @@
 	<string name="connect_tw_btn_title">Connect Twitter</string>
 	<string name="connect_insta_btn_title">Connect Instagram</string>
 	<string name="facebook_app_id ">1585892508388285</string>
-	<string name="comment_hint">Leave a Comment</string>			
+	<string name="comment_hint">Leave a Comment</string>
+	<string name="search_hint">Search for people</string>	
+	<string name="camera_error">This device doesn\'t support Camera2 API.</string>		
+	<string name="filter_none">None</string>
+	<string name="filter_sepia">Sepia</string>
+	<string name="filter_mono">Mono</string>
+	<string name="filter_saturation">Saturation</string>
+	<string name="filter_gamma">Gamma</string>
+	<string name="filter_dim">Dim</string>
+	<string name="filter_amatroka">Amatroka</string>
+	<string name="filter_soft">Soft</string>
+	<string name="filter_hue">Hue</string>
+	<string name="post_fb_btn">Post to Facebook</string>
+	<string name="post_tw_btn">Post to Twitter</string>
+	<string name="post_insta_btn">Post to Instagram</string>
+	<string name="post_caption_hint">Tap here to write a caption</string>
 </resources>

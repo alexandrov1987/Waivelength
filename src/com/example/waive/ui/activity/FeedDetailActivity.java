@@ -2,7 +2,10 @@ package com.example.waive.ui.activity;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import com.example.waive.datamodel.DataManager;
 import com.example.waive.ui.view.CircularImageView;
 import com.example.waive.utils.DialogUtils;
@@ -50,6 +53,7 @@ public class FeedDetailActivity extends Activity {
 	private boolean				mIsDownloadingVideo = false;
 	private ParseObject			mWaive = null;
 	private Context				mContext = null;
+	private String				mOwnerController = null;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,8 @@ public class FeedDetailActivity extends Activity {
         setContentView(R.layout.activity_feeddetail);
 
         final int index = getIntent().getIntExtra("index", 0);
+        mOwnerController = getIntent().getExtras().getString("ownerController");
+        
         mContext = this;
         mProfileImageView = (CircularImageView)findViewById(R.id.profileImageView);
         mThumbnailImageview = (ImageView)findViewById(R.id.thumbnailImageView);
@@ -169,7 +175,29 @@ public class FeedDetailActivity extends Activity {
 			}
 		});
 
-        mWaive = DataManager.sharedInstance().mWaives.get(index);
+        if(mOwnerController.equals("N")){
+            mWaive = DataManager.sharedInstance().mWaives.get(index);
+        }else if(mOwnerController.equals("P")){
+        	mWaive = DataManager.sharedInstance().mWaivesOfProfile.get(index);
+        }else if(mOwnerController.equals("M")){
+        	
+        	int monthIndex = getIntent().getExtras().getInt("monthIndex");
+        	int waiveIndex = getIntent().getExtras().getInt("index");
+    		Map <String,ArrayList<ParseObject>> waivesForMonthDict = DataManager.sharedInstance().mWaivesMonthlyOfProfile.get(monthIndex);
+    		String headerString = (String)waivesForMonthDict.keySet().toArray()[0];
+    		ArrayList<ParseObject> waivesForMonthArr = waivesForMonthDict.get(headerString);
+    		mWaive = waivesForMonthArr.get(waiveIndex);
+    		
+        }else if(mOwnerController.equals("W")){
+        	
+        	int monthIndex = getIntent().getExtras().getInt("weekIndex");
+        	int waiveIndex = getIntent().getExtras().getInt("index");
+    		Map <String,ArrayList<ParseObject>> waivesForWeekDict = DataManager.sharedInstance().mWaivesWeeklyOfProfile.get(monthIndex);
+    		String headerString = (String)waivesForWeekDict.keySet().toArray()[0];
+    		ArrayList<ParseObject> waivesForWeekArr = waivesForWeekDict.get(headerString);
+    		mWaive = waivesForWeekArr.get(waiveIndex);
+    		
+        }
         
         try {
         	mWaive.fetchIfNeeded();
