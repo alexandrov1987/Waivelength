@@ -41,13 +41,15 @@
         <activity android:name="com.example.waive.ui.activity.SigninActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.example.waive.ui.activity.SignupActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.example.waive.ui.activity.TabBarActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="com.example.waive.ui.activity.FeedDetailActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.example.waive.ui.activity.NewsDetailActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.example.waive.ui.activity.LikesActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.example.waive.ui.activity.CommentsActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".ui.activity.AddVideoActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".ui.activity.TrimVideoActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".ui.activity.FilterVideoActivity"></activity>
         <activity android:name=".ui.activity.PostVideoActivity"></activity>
+        <activity android:name=".ui.activity.MultipleFeedsDetailActivity"></activity>
+        <activity android:name=".ui.activity.AddNewWaiveActivity"></activity>
         
     </application>
 

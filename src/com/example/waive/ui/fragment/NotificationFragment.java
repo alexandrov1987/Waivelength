@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.waive.ui.activity.TabBarActivity;
-import com.example.waive.ui.adapter.LikeAdapter;
 import com.example.waive.ui.adapter.NotificationAdapter;
 import com.example.waive.utils.DialogUtils;
 import com.example.waive.utils.NetworkUtils;
@@ -14,12 +13,10 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-
-
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +28,7 @@ public class NotificationFragment extends Fragment {
 	private List<ParseObject>		mNotifications = null;
     private NotificationAdapter 	mAdapter = null;
     private ListView				mListView = null;
+    private SwipeRefreshLayout 		mSwipeRefreshLayout = null;
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,12 +38,24 @@ public class NotificationFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_notification, container, false);	
 		
 		mNotifications = new ArrayList<ParseObject>();
+		
+		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+			@Override
+			public void onRefresh() {
+				refreshNotifications();
+			}
+		});
+
 		mAdapter = new NotificationAdapter(mTab, R.layout.row_notification, mNotifications);
 		mListView = (ListView)v.findViewById(R.id.listView1);
 		mListView.setAdapter(mAdapter);
 		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
 		mListView.setDividerHeight(0);
-		
+
+		DialogUtils.displayProgress(mTab);
+
         return v;
 	}
 
@@ -61,7 +71,6 @@ public class NotificationFragment extends Fragment {
 		
 		if(NetworkUtils.isInternetAvailable(mTab)){
 		
-			DialogUtils.displayProgress(mTab);
 			mNotifications.removeAll(mNotifications);
 			
 			ParseQuery<ParseObject> notificationQuery = ParseQuery.getQuery("Notification");
@@ -76,6 +85,7 @@ public class NotificationFragment extends Fragment {
 						mNotifications.addAll(objs);
 						DialogUtils.closeProgress();
 						mAdapter.notifyDataSetChanged();
+						mSwipeRefreshLayout.setRefreshing(false);
 					}
 				}
 			});

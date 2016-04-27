@@ -90,5 +90,13 @@
         android:layout_height="89dp"
         android:layout_alignParentBottom="true">
         
+        <com.example.waive.ui.view.VideoTrimView
+            android:id="@+id/videoTrimView"
+            android:layout_width="342dp"
+            android:layout_height="45dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"/>
+        
     </RelativeLayout>
 </RelativeLayout>

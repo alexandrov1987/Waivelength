@@ -10,20 +10,31 @@
             android:layout_height="73dp"
             android:background="@drawable/nav_bg3">
             
-           <com.example.waive.ui.view.CircularImageView
-	            android:id="@+id/profileImageView"
-	            android:layout_width="60dp"
-	            android:layout_height="60dp"
-	            android:layout_centerVertical="true"
-	            android:layout_marginStart="10dp"
-		    />
-				
+            <RelativeLayout
+                android:id="@+id/profileImageLayout"
+               	android:layout_width="wrap_content"
+               	android:layout_height="70dp"
+               	android:layout_centerVertical="true"
+               	android:layout_marginStart="10dp">
+	           	<com.example.waive.ui.view.CircularImageView
+	               android:id="@+id/profileImageView"
+	               android:layout_width="60dp"
+	               android:layout_height="60dp"/>
+	            <ImageButton
+	                android:id="@+id/followButton"
+	                android:layout_width="19dp"
+	                android:layout_height="19dp"
+	                android:layout_centerHorizontal="true"
+	                android:layout_alignParentBottom="true"
+	                android:background="@drawable/plus"/>
+			</RelativeLayout>	
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/profileImageView"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/profileImageLayout"
+                android:layout_toStartOf="@+id/followersLayout"
                 >
 	            <TextView
 	                android:id="@+id/usernameTextView"
@@ -34,7 +45,14 @@
 	                android:textSize="13sp"
 	                android:textStyle="bold"
 	                android:text="alexandrov1987" />
-
+				
+	            <ImageButton
+	                android:id="@+id/blockButton"
+	                android:layout_width="19dp"
+	                android:layout_height="19dp"
+	                android:layout_alignParentEnd="true"
+	                android:background="@drawable/unblock60"/>
+	            
 	            <TextView
 	                android:id="@+id/fullnameTextView"
 	                android:layout_width="wrap_content"
@@ -64,7 +82,7 @@
 	                android:layout_centerHorizontal="true"
 	                android:clickable="true"
 	                android:lines="1"
-	                android:text="754"
+	                android:text="0"
 	                android:textColor="#6e8ffb"
 	                android:textSize="12sp"
 	                android:textStyle="bold" />
@@ -104,7 +122,7 @@
 	                android:layout_centerHorizontal="true"
 	                android:lines="1"
 	                android:clickable="true"
-	                android:text="754"
+	                android:text="0"
 	                android:textColor="#6e8ffb"
 	                android:textSize="12sp"
 	                android:textStyle="bold" />
@@ -158,13 +176,18 @@
                 android:background="@drawable/mag_zoomout_btn" />
             
         </RelativeLayout>
-        <ListView
-	        android:id="@+id/lv_post"
-	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
-	        android:layout_below="@+id/zoomView"
-	        android:background="#f8f8f8"
-	        >
-		</ListView>
+        <android.support.v4.widget.SwipeRefreshLayout
+    			android:id="@+id/swipe_refresh_layout"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:layout_below="@+id/zoomView">
+		        <ListView
+			        android:id="@+id/lv_post"
+			        android:layout_width="match_parent"
+			        android:layout_height="match_parent"
+			        android:background="#f8f8f8"
+			        android:listSelector="@android:color/transparent"               
+					android:cacheColorHint="@android:color/transparent"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

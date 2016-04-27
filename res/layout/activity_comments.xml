@@ -36,21 +36,18 @@
         
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/navbarLayout"
-        android:layout_above="@+id/bottombarLayout"
-        android:background="#f8f8f8">
-
-        <ListView
-            android:id="@+id/listView1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            
-        </ListView>
-
-    </RelativeLayout>
+	<android.support.v4.widget.SwipeRefreshLayout
+   			android:id="@+id/swipe_refresh_layout"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:layout_below="@+id/navbarLayout"
+       		android:layout_above="@+id/bottombarLayout"
+       		android:background="#f8f8f8">
+	        <ListView
+	            android:id="@+id/listView1"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"/>
+	</android.support.v4.widget.SwipeRefreshLayout>
 
     <RelativeLayout
         android:id="@+id/bottombarLayout"

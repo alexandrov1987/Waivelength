@@ -65,11 +65,11 @@ public class SignupActivity extends Activity implements ImageChooserListener{
         mPwText = (EditText)findViewById(R.id.pwText);
         mRepwText = (EditText)findViewById(R.id.repwText);
         
-        mEmailText.setText("alexandrov1987@outlook.com");
-        mFullnameText.setText("Nazar Alexandrov");
-        mUsernameText.setText("alexandrov1987");
-        mPwText.setText("1");
-        mRepwText.setText("1");
+//        mEmailText.setText("alexandrov1987@outlook.com");
+//        mFullnameText.setText("Nazar Alexandrov");
+//        mUsernameText.setText("alexandrov1987");
+//        mPwText.setText("1");
+//        mRepwText.setText("1");
         
         mAddphotoButton = (CircularImageView)findViewById(R.id.addPhotoButton);
         mAddphotoButton.setBorderColor(Color.WHITE);
@@ -86,7 +86,7 @@ public class SignupActivity extends Activity implements ImageChooserListener{
 			
 			@Override
 			public void onClick(View v) {
-				SignupActivity.this.finish();
+				finish();
 			}
 		});
         
@@ -100,11 +100,20 @@ public class SignupActivity extends Activity implements ImageChooserListener{
 		});
     }
 	
-    @Override
-    protected void onStart() {
-        super.onStart();
-        overridePendingTransition(R.anim.anim_right_slide_in, R.anim.anim_left_slide_out);
-    }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+	}
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

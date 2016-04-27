@@ -6,7 +6,8 @@ import java.util.Map;
 
 import com.example.waive.R;
 import com.example.waive.datamodel.DataManager;
-import com.example.waive.ui.activity.FeedDetailActivity;
+import com.example.waive.ui.activity.NewsDetailActivity;
+import com.example.waive.ui.activity.MultipleFeedsDetailActivity;
 import com.example.waive.ui.activity.TabBarActivity;
 import com.example.waive.ui.view.CircularImageView;
 import com.parse.CountCallback;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,6 +44,13 @@ public class FeedAdapter extends BaseAdapter {
 	private Context 				context;
 	private TabBarActivity 			tab;
 	private int 					zoom;
+	
+	private class ViewHolder{
+
+	    RelativeLayout body;
+	    int position;
+
+	}
 	
 	public FeedAdapter(Context context, int resource, int resource1, int resource2, 
 			int resource3, int zoom, ArrayList<ParseObject> objects, ArrayList<Map <String,ArrayList<ParseObject>>> objects1, 
@@ -61,31 +70,46 @@ public class FeedAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View v = convertView;
 		
-		if (v == null) {
+		final ViewHolder holder;
+		
+		if (convertView == null) {
 			LayoutInflater li = (LayoutInflater)this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
 			if(zoom == 1){
 				if(position%2==0)
-					v = li.inflate(rsrc, null);
+					convertView = li.inflate(rsrc, null);
 				else
-					v = li.inflate(rsrc1, null);
+					convertView = li.inflate(rsrc1, null);
 				
-				getZoomLevelOneView(v, position);
-
 			}else if(zoom == 2){
-				v = li.inflate(rsrc2, null);
-				
-				getZoomLevelTwoView(v, position);
-				
+				convertView = li.inflate(rsrc2, null);
 			}else if(zoom == 3){
-				v = li.inflate(rsrc3, null);
-				getZoomLevelThreeView(v, position);
+				convertView = li.inflate(rsrc3, null);
 			}
-		} 
+			
+			 holder = new ViewHolder();
+		     holder.body = (RelativeLayout)convertView.findViewById(R.id.numberBody);
+		     convertView.setTag(holder);
+		}else{
+	        holder = (ViewHolder)convertView.getTag();
+	    } 
 
-		return v;
+		holder.position = position;
+		
+		switch(zoom){
+		case 1:
+			getZoomLevelOneView(holder.body, holder.position);
+			break;
+		case 2:
+			getZoomLevelTwoView(holder.body, holder.position);
+			break;
+		case 3:
+			getZoomLevelThreeView(holder.body, holder.position);
+			break;
+		}
+		
+		return convertView;
 	}
 
 	@Override
@@ -268,11 +292,25 @@ public class FeedAdapter extends BaseAdapter {
 	void getZoomLevelTwoView(View v, final int position){
 
 		Map <String,ArrayList<ParseObject>> waivesForWeekDict = this.items1.get(position);
-		String headerString = (String)waivesForWeekDict.keySet().toArray()[0];
+		final String headerString = (String)waivesForWeekDict.keySet().toArray()[0];
 		ArrayList<ParseObject> waivesForWeekArr = waivesForWeekDict.get(headerString);
 
 		TextView headerTextView = (TextView)v.findViewById(R.id.headerTitleTextView);
 		headerTextView.setText(headerString);
+		
+		ImageButton videoButton = (ImageButton)v.findViewById(R.id.videoButton);
+		videoButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				Intent intent = new Intent(context, MultipleFeedsDetailActivity.class);
+				intent.putExtra("ownerController", "W");
+				intent.putExtra("index", position);
+				intent.putExtra("wavetime", headerString.replace("Week Of: ", ""));
+				context.startActivity(intent);
+			}
+		});
 		
 		int counter = 0;
 		int lines = 0;
@@ -302,7 +340,7 @@ public class FeedAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(context, FeedDetailActivity.class);
+					Intent intent = new Intent(context, NewsDetailActivity.class);
 					intent.putExtra("weekIndex", position);
 					intent.putExtra("index", index);
 					intent.putExtra("ownerController", "W");
@@ -342,11 +380,25 @@ public class FeedAdapter extends BaseAdapter {
 
 		
 		Map <String,ArrayList<ParseObject>> waivesForMonthDict = this.items2.get(position);
-		String headerString = (String)waivesForMonthDict.keySet().toArray()[0];
+		final String headerString = (String)waivesForMonthDict.keySet().toArray()[0];
 		ArrayList<ParseObject> waivesForMonthArr = waivesForMonthDict.get(headerString);
 		int counter = 0;
 		int lines = 0;
 		
+		ImageButton videoButton = (ImageButton)v.findViewById(R.id.videoButton);
+		videoButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				Intent intent = new Intent(context, MultipleFeedsDetailActivity.class);
+				intent.putExtra("ownerController", "M");
+				intent.putExtra("index", position);
+				intent.putExtra("wavetime", headerString);
+				context.startActivity(intent);
+			}
+		});
+
 		LinearLayout layout1 = (LinearLayout)v.findViewById(R.id.feedsLayout);
 		layout1.setWeightSum((float)this.items1.size());
 
@@ -378,7 +430,7 @@ public class FeedAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(context, FeedDetailActivity.class);
+					Intent intent = new Intent(context, NewsDetailActivity.class);
 					intent.putExtra("monthIndex", position);
 					intent.putExtra("index", index);
 					intent.putExtra("ownerController", "M");

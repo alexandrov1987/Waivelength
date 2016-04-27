@@ -33,19 +33,19 @@
             
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/navbarLayout"
-            android:background="#ffffff">
-            
+        <android.support.v4.widget.SwipeRefreshLayout
+ 			android:id="@+id/swipe_refresh_layout"
+		    android:layout_width="match_parent"
+    		android:layout_height="match_parent"
+    		android:layout_below="@+id/navbarLayout"
+         	android:background="#ffffff">
 		    <ListView
 		        android:id="@+id/lv_post"
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 				android:listSelector="@android:color/transparent" 
-				android:cacheColorHint="@android:color/transparent">
+				android:cacheColorHint="@android:color/transparent"
+				android:scrollbars="none">
 		    </ListView>
-            
-        </RelativeLayout>
+ 		</android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

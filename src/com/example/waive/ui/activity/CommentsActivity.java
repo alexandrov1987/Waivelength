@@ -16,6 +16,7 @@ import com.example.waive.R;
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,10 +26,12 @@ public class CommentsActivity extends Activity {
 
 	private List<ParseObject> 		mComments = null;
 	private ListView				mListView = null;
+	private SwipeRefreshLayout 		mSwipeRefreshLayout = null;
 	private ParseObject				mWaive = null;
     private CommentAdapter 			mAdapter = null;
     private EditText				mCommentText = null;
-
+    private boolean					mIsLive = false;
+    
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,20 +69,46 @@ public class CommentsActivity extends Activity {
 		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
 		mListView.setDividerHeight(0);
 
-		refreshComments();
+		mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+			@Override
+			public void onRefresh() {
+				refreshComments();
+			}
+		});
+
+		DialogUtils.displayProgress(this);
 	}
 
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
 		super.onBackPressed();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		refreshComments();
+
+		if(!mIsLive){
+			overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+			mIsLive = true;
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+	}
+	
 	void refreshComments(){
 		
 		if(NetworkUtils.isInternetAvailable(this)){
 			
-			DialogUtils.displayProgress(this);
 			ParseQuery<ParseObject> commentsQuery = ParseQuery.getQuery("Comment");
 			commentsQuery.orderByDescending("createdAt");
 			commentsQuery.whereEqualTo("waive", mWaive);
@@ -105,7 +134,7 @@ public class CommentsActivity extends Activity {
 							mComments.removeAll(mComments);
 							mComments.addAll(objs);
 							mAdapter.notifyDataSetChanged();
-							
+							mSwipeRefreshLayout.setRefreshing(false);
 						}
 
 					}else{

@@ -2,6 +2,8 @@ package com.example.waive.ui.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.waive.datamodel.DataManager;
 import com.example.waive.ui.activity.TabBarActivity;
 import com.example.waive.ui.adapter.LikeAdapter;
 import com.example.waive.utils.DialogUtils;
@@ -10,11 +12,11 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.example.waive.R;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +28,9 @@ public class FollowersFragment extends Fragment {
 	private TabBarActivity 			mTab = null;
 	private ListView				mListView = null;
 	private ParseObject				mWaive = null;
-	private ParseUser				mUserToCheck = null;
     private LikeAdapter 			mAdapter = null;
     private List<ParseObject> 		mLikes = null;
+    private SwipeRefreshLayout 		mSwipeRefreshLayout = null;
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +56,16 @@ public class FollowersFragment extends Fragment {
 		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
 		mListView.setDividerHeight(0);
 
-		refreshLikes();
+		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+			@Override
+			public void onRefresh() {
+				refreshLikes();
+			}
+		});
+
+		DialogUtils.displayProgress(mTab);
 		
         return v;
 	}
@@ -62,13 +73,10 @@ public class FollowersFragment extends Fragment {
 	void refreshLikes(){
 		
 		if(NetworkUtils.isInternetAvailable(mTab)){
-			
-			DialogUtils.displayProgress(mTab);
-			
-			mLikes.removeAll(mLikes);
 
+			mLikes.removeAll(mLikes);
 			ParseQuery<ParseObject> query = ParseQuery.getQuery("Followers");
-			query.whereEqualTo("user", mUserToCheck);
+			query.whereEqualTo("user", DataManager.sharedInstance().mUser);
 			query.findInBackground(new FindCallback<ParseObject>(){
 
 				@Override
@@ -82,6 +90,7 @@ public class FollowersFragment extends Fragment {
 					}
 					
 					DialogUtils.closeProgress();
+					mSwipeRefreshLayout.setRefreshing(false);
 				}
 			});
 			

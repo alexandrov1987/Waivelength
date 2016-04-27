@@ -8,6 +8,7 @@ import com.example.waive.ui.fragment.FollowersFragment;
 import com.example.waive.ui.fragment.NewsfeedFragment;
 import com.example.waive.ui.fragment.NotificationFragment;
 import com.example.waive.ui.fragment.ProfileFragment;
+import com.example.waive.ui.fragment.RecordNewWaiveFragment;
 import com.example.waive.ui.fragment.SettingsFragment;
 import com.example.waive.ui.fragment.TermsFragment;
 import com.example.waive.ui.fragment.UserinfoFragment;
@@ -175,6 +176,20 @@ public class TabBarActivity extends FragmentActivity {
 		//super.onBackPressed();
 		
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		//overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+	}
 	
     /** Called before the activity is destroyed. */
     @Override
@@ -182,12 +197,6 @@ public class TabBarActivity extends FragmentActivity {
         free();
         
         super.onDestroy();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        overridePendingTransition(R.anim.anim_right_slide_in, R.anim.anim_left_slide_out);
     }
 
     @Override
@@ -310,10 +319,10 @@ public class TabBarActivity extends FragmentActivity {
 	public void fragmentReplace(int reqNewFragmentIndex) {
 		 
         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        
         switch (reqNewFragmentIndex) {
         case FRAGMENT_NEWSFEED:
-        	transaction.replace(R.id.layout_fragment_content, this.mNewsfeedFragment);        	
+        	transaction.replace(R.id.layout_fragment_content, this.mNewsfeedFragment);
+
         	break;
         case FRAGMENT_NOTIFICATION:
         	transaction.replace(R.id.layout_fragment_content, this.mNotificationFragment);
@@ -347,7 +356,7 @@ public class TabBarActivity extends FragmentActivity {
 		push(FRAGMENT_ADDVIDEO);
         fragmentReplace(cur());
 
-    	Intent intent = new Intent(this, AddVideoActivity.class);
+    	Intent intent = new Intent(this, AddNewWaiveActivity.class);
     	startActivityForResult(intent, REQUEST_SHARE);
     }
 }

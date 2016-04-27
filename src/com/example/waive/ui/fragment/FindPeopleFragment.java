@@ -2,6 +2,8 @@ package com.example.waive.ui.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.waive.datamodel.DataManager;
 import com.example.waive.ui.activity.TabBarActivity;
 import com.example.waive.ui.adapter.FindPeopleAdapter;
 import com.example.waive.ui.adapter.LikeAdapter;
@@ -20,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,21 +30,17 @@ import android.widget.RelativeLayout;
 
 public class FindPeopleFragment extends Fragment {
 	
-	private static final int NORM_SEARCH_SELECTOR = 0;
-	private static final int FB_SEARCH_SELECTOR = 1;
-	private static final int TW_SEARCH_SELECTOR = 2;
-	
-	private TabBarActivity 		mTab = null;
-	private ImageView 			mNormSearchSelector = null;
-	private ImageView 			mFbSearchSelector = null;
-	private ImageView 			mTwSearchSelector = null;
-	private int					mSearchSelector = NORM_SEARCH_SELECTOR;
-	private List<ParseObject>	mAllUsers = null;
-	private List<ParseObject>	mFbUsers = null;
-	private List<ParseObject>	mTwUsers = null;
-	private List<ParseObject>	mFilteredUsers = null;
-    private FindPeopleAdapter 	mAdapter = null;
-	private ListView			mListView = null;
+	private TabBarActivity 			mTab = null;
+	private ImageView 				mNormSearchSelector = null;
+	private ImageView 				mFbSearchSelector = null;
+	private ImageView 				mTwSearchSelector = null;
+	private int						mSelectedPlatform = 1;
+	private ArrayList<ParseObject>	mAllUsers = null;
+	private ArrayList<ParseObject>	mFbUsers = null;
+	private ArrayList<ParseObject>	mTwUsers = null;
+	private ArrayList<ParseObject>	mFilteredUsers = null;
+    private FindPeopleAdapter 		mAdapter = null;
+	private ListView				mListView = null;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,10 +71,12 @@ public class FindPeopleFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				mSearchSelector = FindPeopleFragment.NORM_SEARCH_SELECTOR;
+				mSelectedPlatform = 1;
 				mNormSearchSelector.setVisibility(View.VISIBLE);
 				mFbSearchSelector.setVisibility(View.GONE);
 				mTwSearchSelector.setVisibility(View.GONE);
+				
+				fetchAllUsers();
 			}
 		});
 		
@@ -84,10 +85,12 @@ public class FindPeopleFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				mSearchSelector = FindPeopleFragment.FB_SEARCH_SELECTOR;
+				mSelectedPlatform = 2;
 				mNormSearchSelector.setVisibility(View.GONE);
 				mFbSearchSelector.setVisibility(View.VISIBLE);
 				mTwSearchSelector.setVisibility(View.GONE);
+				
+				fetchFbFriends();
 			}
 		});
 		
@@ -96,14 +99,24 @@ public class FindPeopleFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				mSearchSelector = FindPeopleFragment.TW_SEARCH_SELECTOR;
+				mSelectedPlatform = 3;
 				mNormSearchSelector.setVisibility(View.GONE);
 				mFbSearchSelector.setVisibility(View.GONE);
 				mTwSearchSelector.setVisibility(View.VISIBLE);
+				
+				fetchTwitterFriends();
 			}
 		});
 		
-		mAdapter = new FindPeopleAdapter(mTab, R.layout.row_findpeople, mAllUsers);
+		EditText searchEdit = (EditText)v.findViewById(R.id.editText1);
+		
+		mAllUsers = new ArrayList<ParseObject>();
+		mFbUsers = new ArrayList<ParseObject>();
+		mTwUsers = new ArrayList<ParseObject>();
+		mFilteredUsers = new ArrayList<ParseObject>();
+		
+		mAdapter = new FindPeopleAdapter(mTab, R.layout.row_findpeople, mAllUsers,
+				mFbUsers, mTwUsers, mFilteredUsers, 1);
 		mListView = (ListView)v.findViewById(R.id.listView1);
 		mListView.setAdapter(mAdapter);
 		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
@@ -119,52 +132,45 @@ public class FindPeopleFragment extends Fragment {
 		if(NetworkUtils.isInternetAvailable(mTab)){
 			DialogUtils.displayProgress(mTab);
 			
-			mTab.runOnUiThread(new Runnable() {
+			ParseQuery<ParseObject> allUsersQuery = null;
+			
+			if(DataManager.sharedInstance().mUser == null){
+				allUsersQuery = ParseQuery.getQuery("_User");
+				allUsersQuery.orderByDescending("createdAt");
+				allUsersQuery.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
+			}else{
+				List<ParseUser> following = DataManager.sharedInstance().mUser.getList("following");
+				
+				if(following == null)
+					following = new ArrayList<ParseUser>();
+				
+				List<String> idArray = new ArrayList<String>();
+				
+				for(int i = 0; i < following.size(); i++){
+					
+					ParseUser user = following.get(i);
+					String objectId = user.getObjectId();
+					idArray.add(objectId);
+				}
+				
+				allUsersQuery = ParseQuery.getQuery("_User");
+				allUsersQuery.orderByDescending("createdAt");
+				allUsersQuery.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
+				allUsersQuery.whereNotContainedIn("objectId", idArray);
+			}
+			
+			allUsersQuery.findInBackground(new FindCallback<ParseObject>(){
 
 				@Override
-				public void run() {
+				public void done(List<ParseObject> objs, ParseException e) {
 					
-					ParseQuery<ParseObject> allUsersQuery = null;
+					DialogUtils.closeProgress();
 					
-					if(mTab.mUser == null){
-						allUsersQuery = ParseQuery.getQuery("_User");
-						allUsersQuery.orderByDescending("createdAt");
-						allUsersQuery.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
-					}else{
-						List<ParseUser> following = mTab.mUser.getList("following");
-						
-						if(following == null)
-							following = new ArrayList<ParseUser>();
-						
-						List<String> idArray = new ArrayList<String>();
-						
-						for(int i = 0; i < following.size(); i++){
-							
-							ParseUser user = following.get(i);
-							String objectId = user.getObjectId();
-							idArray.add(objectId);
-						}
-						
-						allUsersQuery = ParseQuery.getQuery("_User");
-						allUsersQuery.orderByDescending("createdAt");
-						allUsersQuery.whereNotEqualTo("objectId", ParseUser.getCurrentUser().getObjectId());
-						allUsersQuery.whereNotContainedIn("objectId", idArray);
+					if(e == null){
+						mAllUsers.removeAll(mAllUsers);
+						mAllUsers.addAll(objs);
+						mAdapter.notifyDataSetChanged();
 					}
-					
-					allUsersQuery.findInBackground(new FindCallback<ParseObject>(){
-
-						@Override
-						public void done(List<ParseObject> objs, ParseException e) {
-							
-							DialogUtils.closeProgress();
-							
-							if(e == null){
-								mAllUsers.removeAll(mAllUsers);
-								mAllUsers.addAll(objs);
-								mAdapter.notifyDataSetChanged();
-							}
-						}
-					});
 				}
 			});
 		}else{
@@ -175,5 +181,10 @@ public class FindPeopleFragment extends Fragment {
 	void fetchFbFriends(){
 		
 	}
+	
+	void fetchTwitterFriends(){
+		
+	}
+	
 	
 }

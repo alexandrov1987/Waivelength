@@ -5,27 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.waive.datamodel.DataManager;
 import com.example.waive.ui.adapter.LikeAdapter;
-import com.example.waive.ui.view.CircularImageView;
 import com.example.waive.utils.DialogUtils;
 import com.example.waive.utils.NetworkUtils;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.example.waive.R;
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class LikesActivity extends Activity {
 
@@ -33,7 +24,8 @@ public class LikesActivity extends Activity {
 	private ListView				mListView = null;
 	private ParseObject				mWaive = null;
     private LikeAdapter 			mAdapter = null;
-
+    private SwipeRefreshLayout 		mSwipeRefreshLayout = null;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -60,7 +52,16 @@ public class LikesActivity extends Activity {
 		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
 		mListView.setDividerHeight(0);
 
-		refreshLikes();
+		mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+			@Override
+			public void onRefresh() {
+				refreshLikes();
+			}
+		});
+
+		DialogUtils.displayProgress(this);
 	}
 
 	@Override
@@ -69,11 +70,25 @@ public class LikesActivity extends Activity {
 		super.onBackPressed();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		refreshLikes();
+
+		overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+	}
+
 	void refreshLikes(){
 		
 		if(NetworkUtils.isInternetAvailable(this)){
-			
-			DialogUtils.displayProgress(this);
 			
 			mLikes.removeAll(mLikes);
 
@@ -89,8 +104,9 @@ public class LikesActivity extends Activity {
 				mLikes.addAll(objs);
 
 			mAdapter.notifyDataSetChanged();
-			
 			DialogUtils.closeProgress();
+			mSwipeRefreshLayout.setRefreshing(false);
+			
 		}else{
 			DialogUtils.showErrorAlert(this, "No Internet", "You are not connected to internet. Please connect and try again.");
 		}

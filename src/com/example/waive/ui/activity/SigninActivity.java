@@ -34,7 +34,7 @@ public class SigninActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				SigninActivity.this.finish();
+				finish();
 			}
 		});
         
@@ -48,12 +48,20 @@ public class SigninActivity extends Activity {
 		});
     }
 	
-    @Override
-    protected void onStart() {
-        super.onStart();
-        overridePendingTransition(R.anim.anim_right_slide_in, R.anim.anim_left_slide_out);
-    }
-    
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		overridePendingTransition(R.anim.animation_enter, R.anim.animation_leave);
+	}
+
 	private void onClicDone(){
 
 		String email = this.mEmailText.getText().toString();

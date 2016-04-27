@@ -98,5 +98,31 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true">
+	    
+        <com.example.waive.ui.view.WaiveView
+            android:id="@+id/waiveView"
+            android:layout_width="match_parent"
+        	android:layout_height="match_parent"/>
+         
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/timeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="48dp">
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="17dp"
+            android:background="@drawable/popbg"/>
+	    <TextView
+	        android:id="@+id/timeTextView"
+	        android:layout_width="26dp"
+	        android:layout_height="13dp"
+	        android:textColor="#ffffff"
+	        android:textSize="10sp"
+	        android:gravity="center"
+	        android:text="0.0"/>
+	    
     </RelativeLayout>
 </RelativeLayout>

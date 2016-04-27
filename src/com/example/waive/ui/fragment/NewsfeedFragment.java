@@ -4,66 +4,67 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.waive.datamodel.BlockedList;
 import com.example.waive.datamodel.DataManager;
-import com.example.waive.ui.activity.FeedDetailActivity;
+import com.example.waive.ui.activity.NewsDetailActivity;
 import com.example.waive.ui.activity.TabBarActivity;
 import com.example.waive.ui.adapter.FeedAdapter;
-import com.example.waive.ui.view.CircularImageView;
 import com.example.waive.utils.DialogUtils;
 import com.example.waive.utils.NetworkUtils;
-import com.parse.CountCallback;
 import com.parse.FindCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.example.waive.R;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class NewsfeedFragment extends Fragment {
 	
 	private TabBarActivity 			mTab = null;
 	private ListView 				mListView = null;
     private FeedAdapter 			mAdapter = null;
+    private SwipeRefreshLayout 		mSwipeRefreshLayout;
     private boolean					mLikeLock = false;
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		this.mTab = (TabBarActivity)getActivity();
+		mTab = (TabBarActivity)getActivity();
 		View v = inflater.inflate(R.layout.fragment_newsfeed, container, false);	
 
-		this.mAdapter = new FeedAdapter(mTab, R.layout.feed_row, R.layout.feed_row1, R.layout.feed_row2, R.layout.feed_row2,
+		mAdapter = new FeedAdapter(mTab, R.layout.feed_row, R.layout.feed_row1, R.layout.feed_row2, R.layout.feed_row2,
 				1, DataManager.sharedInstance().mWaives, null, null, mTab);
 
-		this.mListView = (ListView)v.findViewById(R.id.lv_post);
-		this.mListView.setDivider(new ColorDrawable(android.R.color.transparent));
-		this.mListView.setDividerHeight(0);
-		this.mListView.setAdapter(this.mAdapter);
-		this.mListView.setOnItemClickListener(new OnItemClickListener(){
+		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+			@Override
+			public void onRefresh() {
+				refreshNewsFeed();
+			}
+		});
+		
+		mListView = (ListView)v.findViewById(R.id.lv_post);
+		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
+		mListView.setDividerHeight(0);
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				Intent intent = new Intent(mTab, FeedDetailActivity.class);
+				Intent intent = new Intent(mTab, NewsDetailActivity.class);
 				intent.putExtra("index", position);
 				intent.putExtra("ownerController", "N");
 				startActivity(intent);
@@ -79,56 +80,67 @@ public class NewsfeedFragment extends Fragment {
 			}
 		});
 		
-		refreshNewsFeed();
+		DialogUtils.displayProgress(mTab);
 		
         return v;
 	}
 	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		refreshNewsFeed();
+	}
+
 	void refreshNewsFeed(){
 
-		if(NetworkUtils.isInternetAvailable(mTab)){
-			
-			DialogUtils.displayProgress(mTab);
-			ArrayList<ParseObject> blockedIDs = BlockedList.getBlockedList();
-			
-			ParseQuery<ParseObject> newsFeedQuery = ParseQuery.getQuery("Waive");
-			newsFeedQuery.orderByDescending("createdAt");
-			newsFeedQuery.whereNotContainedIn("user", blockedIDs);
-			
-			newsFeedQuery.findInBackground(new FindCallback<ParseObject>() {
-				@Override
-				public void done(List<ParseObject> objs, ParseException e) {
-
-					if(e == null){
-						
-						for(int i = 0; i < objs.size(); i++){
-							ParseObject obj = objs.get(i);
-
-							try {
-								obj.fetchIfNeeded();
-							} catch (ParseException e1) {
-								e1.printStackTrace();
-							}
-						}
-						
-						if(objs.size() > 0){
-							
-							DataManager.sharedInstance().mWaives.removeAll(DataManager.sharedInstance().mWaives);
-							DataManager.sharedInstance().mWaives.addAll(objs);
-						}
-						
-						mAdapter.notifyDataSetChanged();
-
-					}else{
-
-						DialogUtils.showErrorAlert(mTab, "Error", e.getMessage());
-					}
+		mTab.runOnUiThread(new Runnable() {
+		    public void run() {
+				if(NetworkUtils.isInternetAvailable(mTab)){
 					
-					DialogUtils.closeProgress();
-				}}
-			);
-		}else{
-			DialogUtils.showErrorAlert(mTab, "No Internet", "You are not connected to internet. Please connect and try again.");
-		}
+					ArrayList<ParseObject> blockedIDs = BlockedList.getBlockedList();
+					
+					ParseQuery<ParseObject> newsFeedQuery = ParseQuery.getQuery("Waive");
+					newsFeedQuery.orderByDescending("createdAt");
+					newsFeedQuery.whereNotContainedIn("user", blockedIDs);
+					
+					newsFeedQuery.findInBackground(new FindCallback<ParseObject>() {
+						@Override
+						public void done(List<ParseObject> objs, ParseException e) {
+
+							if(e == null){
+								
+								for(int i = 0; i < objs.size(); i++){
+									ParseObject obj = objs.get(i);
+
+									try {
+										obj.fetchIfNeeded();
+									} catch (ParseException e1) {
+										e1.printStackTrace();
+									}
+								}
+								
+								if(objs.size() > 0){
+									
+									DataManager.sharedInstance().mWaives.removeAll(DataManager.sharedInstance().mWaives);
+									DataManager.sharedInstance().mWaives.addAll(objs);
+								}
+								
+								mAdapter.notifyDataSetChanged();
+								mSwipeRefreshLayout.setRefreshing(false);
+								DialogUtils.closeProgress();
+								
+							}else{
+
+								DialogUtils.showErrorAlert(mTab, "Error", e.getMessage());
+							}
+						}}
+					);
+				}else{
+					DialogUtils.showErrorAlert(mTab, "No Internet", "You are not connected to internet. Please connect and try again.");
+				}
+		    }
+		});
+		
 	}
 }

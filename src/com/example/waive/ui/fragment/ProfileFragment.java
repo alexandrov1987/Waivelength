@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.waive.datamodel.DataManager;
-import com.example.waive.ui.activity.FeedDetailActivity;
+import com.example.waive.ui.activity.NewsDetailActivity;
 import com.example.waive.ui.activity.TabBarActivity;
 import com.example.waive.ui.adapter.FeedAdapter;
 import com.example.waive.utils.DialogUtils;
@@ -23,6 +23,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.example.waive.R;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,6 +31,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +47,8 @@ public class ProfileFragment extends Fragment {
 	private TabBarActivity 			mTab = null;
 	private ParseUser				mUser = null;
 	
+	private SwipeRefreshLayout 		mSwipeRefreshLayout;
+	private ImageButton 			mFollowButton;
 	private ImageView				mProfileImageView = null;
 	private TextView				mUsernameTextView = null;
 	private TextView				mFullnameTextView = null;
@@ -52,7 +56,7 @@ public class ProfileFragment extends Fragment {
 	private TextView				mFollowingsTextView = null;
 	private ListView				mListView = null;
 	private int						mZoomValue = 0;
-	private boolean					mNoWaives = false;
+	private boolean					mIsFollow = false;
     private FeedAdapter 			mAdapter = null;
     
 	@Override
@@ -71,6 +75,13 @@ public class ProfileFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
+				
+				if(mUser != null){
+					DataManager.sharedInstance().mUser = mUser;
+				}else{
+					DataManager.sharedInstance().mUser = ParseUser.getCurrentUser();
+				}
+				
 				mTab.goToTab(TabBarActivity.FRAGMENT_FOLLOWERS);
 			}
 		});
@@ -80,6 +91,13 @@ public class ProfileFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
+				
+				if(mUser != null){
+					DataManager.sharedInstance().mUser = mUser;
+				}else{
+					DataManager.sharedInstance().mUser = null;
+				}
+				
 				mTab.goToTab(TabBarActivity.FRAGMENT_FINDPEOPLE);
 			}
 		});
@@ -114,13 +132,132 @@ public class ProfileFragment extends Fragment {
 			}
 		});
 		
+		ImageButton blockButton = (ImageButton)v.findViewById(R.id.blockButton);
+		blockButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			}
+		});
+
+		mFollowButton = (ImageButton)v.findViewById(R.id.followButton);
+		mFollowButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				if(mIsFollow){
+
+					mFollowButton.setBackgroundResource(R.drawable.minus);
+					ParseUser.getCurrentUser().addUnique("following", mUser);
+					ParseUser.getCurrentUser().saveInBackground(new SaveCallback(){
+
+						@Override
+						public void done(ParseException e) {
+							if(e == null){
+								ParseQuery<ParseObject> followersQuery = ParseQuery.getQuery("Followers");
+								followersQuery.whereEqualTo("user", mUser);
+								followersQuery.findInBackground(new FindCallback<ParseObject>(){
+
+									@Override
+									public void done(List<ParseObject> objs, ParseException e) {
+										
+										if(e == null){
+											objs.get(0).addUnique("followers", ParseUser.getCurrentUser());
+											objs.get(0).saveInBackground();
+										}
+									}
+								});
+								
+								ParseObject notificationObject = ParseObject.create("Notification");
+								notificationObject.put("fromUser", ParseUser.getCurrentUser());
+								notificationObject.put("toUser", mUser);
+								notificationObject.put("type", "following");
+								notificationObject.saveInBackground(new SaveCallback(){
+
+									@Override
+									public void done(ParseException arg0) {
+										int followers = Integer.parseInt(mFollowersTextView.getEditableText().toString());
+										followers++;
+										mFollowersTextView.setText(String.valueOf(followers));
+									}
+								});
+							}
+						}
+					});
+					
+				}else{
+					
+					mFollowButton.setBackgroundResource(R.drawable.plus);
+
+					
+					ParseUser.getCurrentUser().saveInBackground(new SaveCallback(){
+
+						@Override
+						public void done(ParseException e) {
+							
+							if(e == null){
+								ParseQuery<ParseObject> followersQuery = ParseQuery.getQuery("Followers");
+								followersQuery.whereEqualTo("user", mUser);
+								followersQuery.findInBackground(new FindCallback<ParseObject>(){
+
+									@Override
+									public void done(List<ParseObject> objs, ParseException e) {
+										
+										if(e == null){
+											
+											objs.get(0).saveInBackground();
+										}
+									}
+								});
+								
+								ParseQuery<ParseObject> notificationQuery = ParseQuery.getQuery("Notification");
+								notificationQuery.whereEqualTo("fromUser", ParseUser.getCurrentUser());
+								notificationQuery.whereEqualTo("toUser", mUser);
+								notificationQuery.whereEqualTo("type", "following");
+								notificationQuery.findInBackground(new FindCallback<ParseObject>(){
+
+									@Override
+									public void done(List<ParseObject> objs, ParseException e) {
+										if(e == null && objs.size() != 0){
+											ParseObject.deleteAllInBackground(objs);
+											
+											int followers = Integer.parseInt(mFollowersTextView.getEditableText().toString());
+											followers--;
+											mFollowersTextView.setText(String.valueOf(followers));
+										}
+									}
+								});
+							}
+						}
+					});
+				}
+			}
+		});
+		
+		if(!mTab.mIsOtherUserProfile){
+			
+			blockButton.setVisibility(View.GONE);
+		}
+		
 		mZoomValue = 1;
+		
+		
 		mAdapter = new FeedAdapter(mTab, R.layout.feed_row, R.layout.feed_row1, 
 				R.layout.feed_row2, R.layout.feed_row2, mZoomValue, 
 				DataManager.sharedInstance().mWaivesOfProfile, 
 				DataManager.sharedInstance().mWaivesWeeklyOfProfile, 
 				DataManager.sharedInstance().mWaivesMonthlyOfProfile, mTab);
 		
+		mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+			@Override
+			public void onRefresh() {
+				refreshProfile();
+			}
+		});
+
 		mListView = (ListView)v.findViewById(R.id.lv_post);
 		mListView.setDivider(new ColorDrawable(android.R.color.transparent));
 		mListView.setDividerHeight(0);
@@ -132,7 +269,7 @@ public class ProfileFragment extends Fragment {
 					int position, long id) {
 
 				if(mZoomValue == 1){
-					Intent intent = new Intent(mTab, FeedDetailActivity.class);
+					Intent intent = new Intent(mTab, NewsDetailActivity.class);
 					intent.putExtra("index", position);
 					intent.putExtra("ownerController", "P");
 					startActivity(intent);
@@ -211,6 +348,7 @@ public class ProfileFragment extends Fragment {
 				        	 fillWeeklyAndMonthlyArrays();
 			        	 }
 			        	 
+			        	 mSwipeRefreshLayout.setRefreshing(false);
 			        	 mAdapter.notifyDataSetChanged();
 			        	 
 			         } else {
@@ -230,34 +368,64 @@ public class ProfileFragment extends Fragment {
 		if(mUser != null){
 			
 			forUser = mUser;
+			mFollowButton.setVisibility(View.VISIBLE);
 			
+			if(ParseUser.getCurrentUser().getList("following").contains(forUser)){
+				mIsFollow = true;
+				mFollowButton.setBackgroundResource(R.drawable.minus);
+			}else{
+				mIsFollow = false;
+				mFollowButton.setBackgroundResource(R.drawable.plus);
+			}
+
+			ParseQuery<ParseObject> followersQuery = ParseQuery.getQuery("Followers");
+			followersQuery.whereEqualTo("user", mUser);
+			followersQuery.findInBackground(new FindCallback<ParseObject>(){
+
+				@Override
+				public void done(List<ParseObject> objs, ParseException e) {
+					
+					if(e == null){
+						
+						if(objs.size() > 0){
+							
+							List<ParseObject> followers = objs.get(0).getList("followers");
+							
+							if(followers != null && followers.size() > 0)
+								mFollowersTextView.setText(String.valueOf(followers.size()));
+							else
+								mFollowersTextView.setText("0");
+						}
+					}
+				}
+			});
+
 		}else{
 			forUser = ParseUser.getCurrentUser();
-		}
-		
-		ParseQuery<ParseObject> followersQuery = ParseQuery.getQuery("Followers");
-		followersQuery.whereEqualTo("user", forUser);
-		followersQuery.findInBackground(new FindCallback<ParseObject>(){
+			mFollowButton.setVisibility(View.GONE);
+			
+			ParseQuery<ParseObject> followersQuery = ParseQuery.getQuery("Followers");
+			followersQuery.whereEqualTo("user", ParseUser.getCurrentUser());
+			followersQuery.findInBackground(new FindCallback<ParseObject>(){
 
-			@Override
-			public void done(List<ParseObject> objs, ParseException e) {
-				
-				if(e == null){
+				@Override
+				public void done(List<ParseObject> objs, ParseException e) {
 					
-					if(objs.size() > 0){
+					if(e == null){
 						
-						List<ParseObject> followers = objs.get(0).getList("followers");
-						
-						if(followers != null && followers.size() > 0)
-							mFollowersTextView.setText(String.valueOf(followers.size()));
-						else
-							mFollowersTextView.setText("0");
+						if(objs.size() > 0){
+							
+							List<ParseObject> followers = objs.get(0).getList("followers");
+							
+							if(followers != null && followers.size() > 0)
+								mFollowersTextView.setText(String.valueOf(followers.size()));
+							else
+								mFollowersTextView.setText("0");
+						}
 					}
-				}else{
-					mFollowersTextView.setText("0");
 				}
-			}
-		});
+			});
+		}
 		
 		ParseFile userImageFile = forUser.getParseFile("profileImage");
 		userImageFile.getDataInBackground(new GetDataCallback() {
@@ -277,6 +445,60 @@ public class ProfileFragment extends Fragment {
 			mFollowingsTextView.setText(String.valueOf(followings.size()));
 		else
 			mFollowingsTextView.setText("0");
+	}
+	
+	void onFollowButton(){
+
+		if(mIsFollow){
+			
+			mFollowButton.setBackgroundResource(R.drawable.minus);
+			
+			ParseUser.getCurrentUser().addUnique("following", mUser);
+			ParseUser.getCurrentUser().saveInBackground(new SaveCallback(){
+
+				@Override
+				public void done(ParseException e) {
+					
+					if(e == null){
+						ParseQuery<ParseObject> follwersQuery = ParseQuery.getQuery("Followers");
+						follwersQuery.whereEqualTo("user", mUser);
+						follwersQuery.findInBackground(new FindCallback<ParseObject>(){
+
+							@Override
+							public void done(List<ParseObject> objs,
+									ParseException e) {
+								
+								if(e == null){
+									
+									objs.get(0).addUnique("followers", ParseUser.getCurrentUser());
+									objs.get(0).saveInBackground();
+								}
+							}
+						});
+						
+						ParseObject notificationObject = ParseObject.create("Notification");
+						notificationObject.put("fromUser", ParseUser.getCurrentUser());
+						notificationObject.put("toUser", mUser);
+						notificationObject.put("type", "following");
+						notificationObject.saveInBackground(new SaveCallback(){
+
+							@Override
+							public void done(ParseException e) {
+								
+								if(e == null){
+									int followers = Integer.parseInt(mFollowersTextView.getText().toString());
+									mFollowersTextView.setText(String.valueOf(followers));
+								}
+							}
+						});
+					}
+				}
+			});
+		}else{
+			
+			mFollowButton.setBackgroundResource(R.drawable.plus);
+			
+		}
 	}
 	
 	void fillWeeklyAndMonthlyArrays(){
